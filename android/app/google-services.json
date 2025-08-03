@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "145886959352",
+    "project_id": "plugin-tester-fd258",
+    "storage_bucket": "plugin-tester-fd258.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145886959352:android:e43c9e8663d37899964d0d",
+        "android_client_info": {
+          "package_name": "com.example.plugin_tester"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDzsVjAZYY8Lz_HmprglKLafTXKDVjIgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,228 @@
+name: plugin_tester
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: 3.8.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # apz_camera: 
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/camera/v1.0.0
+  # apz_contact: 
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/contact/v1.0.0
+  # apz_contact_picker: 
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/contact_picker/v1.0.0
+  # apz_custom_datepicker: 
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/custom_datepicker/v1.0.0 
+  # apz_device_info: 
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/device_info/v1.0.0
+  # apz_utils: 
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/utils/v1.0.0
+  # apz_gps:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/gps/v1.0.0
+  # apz_in_app_review:  
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/in_app_review/v1.0.0
+  # apz_inapp_update:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/inapp_update/v1.0.0
+  # apz_network_state:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/network_state/v1.0.0
+  # apz_notification:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/notification/v1.0.0
+  # apz_pdf_viewer:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/pdf_viewer/v1.0.0
+  # apz_photopicker:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/photopicker/v1.0.0
+  # apz_qr:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/qr/v1.0.0
+  # # apz_screenshot:
+  # #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/screenshot/v1.0.0
+  # apz_send_sms:
+  #   path: C:/Users/m.jeswanth/Desktop/Flutter_Plugins/core/apz_core/plugins/send_sms/v1.0.0
+     
+  
+  apz_camera:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/camera/v1.0.0
+
+  apz_contact:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/contact/v1.0.0
+
+  apz_contact_picker:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/contact_picker/v1.0.0
+
+  apz_custom_datepicker:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/custom_datepicker/v1.0.0
+
+  apz_device_info:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/device_info/v1.0.0
+
+  apz_utils:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/utils/v1.0.0
+
+  apz_gps:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/gps/v1.0.0
+
+  apz_in_app_review:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/in_app_review/v1.0.0
+
+  apz_inapp_update:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/inapp_update/v1.0.0
+
+  apz_network_state:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/network_state/v1.0.0
+
+  apz_notification:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/notification/v1.0.0
+
+  apz_pdf_viewer:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/pdf_viewer/v1.0.0
+
+  apz_photopicker:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/photopicker/v1.0.0
+
+  apz_qr:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/qr/v1.0.0
+
+  apz_screenshot:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/screenshot/v1.0.0
+
+  apz_send_sms:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/send_sms/v1.0.0
+
+  apz_app_switch:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/app_switch/v1.0.0   
+      
+  apz_biometric:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/biometric/v1.0.0      
+
+  apz_deeplink:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/deeplink/v1.0.0 
+  
+  apz_device_fingerprint:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/device_fingerprint/v1.0.0 
+
+  apz_digi_scan:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/digi_scan/v1.0.0
+
+  apz_file_operations:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/file_operations/v1.0.0 
+
+  apz_idle_timeout:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/ideal_timeout/v1.0.0
+      
+  apz_network_state_perm:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/network_state_perm/v1.0.0 
+
+  apz_peripherals:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/peripherals/v1.0.0
+
+  apz_screen_security:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/screen_security/v1.0.0 
+
+  apz_share:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/share/v1.0.0 
+
+  apz_webview:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/webview/v1.0.0 
+
+  
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/plugin_metadata.json
