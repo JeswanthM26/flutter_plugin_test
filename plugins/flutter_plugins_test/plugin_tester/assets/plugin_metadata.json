@@ -1,0 +1,336 @@
+{
+  "camera": {
+    "fields": [
+      {"key": "crop", "label": "Enable Cropping", "type": "bool", "default": true},
+      {"key": "quality", "label": "Image Quality (%)", "type": "int", "default": 80},
+      {"key": "fileName", "label": "File Name", "type": "text", "default": "my_image"},
+      {"key": "format", "label": "Image Format", "type": "dropdown", "options": ["jpeg", "png"], "default": "jpeg"},
+      {"key": "targetWidth", "label": "Target Width", "type": "int", "default": 1080},
+      {"key": "targetHeight", "label": "Target Height", "type": "int", "default": 1080},
+      {"key": "cameraDeviceSensor", "label": "Camera Sensor", "type": "dropdown", "options": ["rear", "front"], "default": "rear"},
+      {"key": "cropTitle", "label": "Crop Title", "type": "text", "default": "Crop Image"}
+    ]
+  },
+  "contact": {
+    "fields": [
+      {"key": "fetchEmail", "label": "Fetch Email", "type": "bool", "default": true},
+      {"key": "fetchPhoto", "label": "Fetch Photo", "type": "bool", "default": true},
+      {"key": "searchQuery", "label": "Search Query", "type": "text", "optional": true}
+    ]
+  },
+  "contact_picker": {
+    "fields": []
+  },
+  "date_picker": {
+    "fields": [
+      {"key": "minDate", "label": "Minimum Date", "type": "date"},
+      {"key": "maxDate", "label": "Maximum Date", "type": "date"},
+      {"key": "initialDate", "label": "Initial Date", "type": "date"},
+      {"key": "calendarType", "label": "Calendar Type", "type": "dropdown", "options": ["single", "range"], "default": "single"},
+      {"key": "themeColor", "label": "Theme Color", "type": "color", "optional": true},
+      {"key": "dateFormat", "label": "Date Format", "type": "text", "default": "dd/MM/yyyy", "optional": true}
+    ]
+  },
+  "device_info": {
+    "fields": []
+  },
+  "gps": {
+    "fields": []
+  },
+  "in_app_review": {
+    "fields": []
+  },
+  "inapp_update": {
+    "fields": [
+      {"key": "updateType","label": "Update Type","type": "dropdown", "options": ["check", "immediate", "flexible"],"default": "check" }
+    ]
+  },
+  "network_state": {
+    "fields": []
+  },
+  "notification": {
+    "fields": [
+      { "key": "title", "label": "Title", "type": "text" },
+      { "key": "body", "label": "Body", "type": "text" }
+    ]
+  },
+   "pdf_viewer": {
+    "fields": [
+      { "key": "source", "label": "PDF Source", "type": "text" },
+      { "key": "sourceType", "label": "Source Type", "type": "dropdown", "options": ["network", "asset", "file"], "default": "network" },
+      { "key": "password", "label": "Password", "type": "text", "optional": true },
+      { "key": "headers", "label": "Headers (JSON)", "type": "text", "optional": true }
+    ]
+  },
+  "photopicker": {
+    "fields": [
+      { "key": "crop", "label": "Enable Cropping", "type": "bool", "default": true },
+      { "key": "quality", "label": "Image Quality (%)", "type": "int", "default": 80 },
+      { "key": "fileName", "label": "File Name", "type": "text", "default": "my_image" },
+      { "key": "format", "label": "Image Format", "type": "dropdown", "options": ["jpeg", "png"], "default": "jpeg" },
+      { "key": "targetWidth", "label": "Target Width", "type": "int", "default": 1080 },
+      { "key": "targetHeight", "label": "Target Height", "type": "int", "default": 1080 },
+      { "key": "cropTitle", "label": "Crop Title", "type": "text", "default": "Crop Image" }
+    ]
+  },
+  "qr": {
+    "fields": [
+      { "key": "text", "label": "QR Text", "type": "text" },
+      { "key": "height", "label": "Height", "type": "int", "default": 120, "optional": true },
+      { "key": "width", "label": "Width", "type": "int", "default": 120, "optional": true },
+      { "key": "margin", "label": "Margin", "type": "int", "default": 0, "optional": true },
+      { "key": "eccLevel", "label": "Error Correction Level", "type": "dropdown", "options": ["low", "medium", "quartile", "high"], "default": "low", "optional": true }
+    ]
+  },
+  "screenshot": {
+    "fields": [
+      { "key": "text", "label": "Text to Share", "type": "text" },
+      { "key": "customFileName", "label": "Custom File Name", "type": "text", "optional": true }
+    ]
+  },
+  "send_sms": {
+    "fields": [
+      { "key": "phoneNumber", "label": "Phone Number", "type": "text" },
+      { "key": "message", "label": "Message", "type": "text" }
+    ]
+  },
+  "app_switch": {
+  "fields": []
+},
+"biometric": {
+  "fields": [
+    { "key": "reason", "label": "Auth Reason", "type": "text", "default": "Authenticate to access the app" },
+    { "key": "stickyAuth", "label": "Sticky Auth", "type": "bool", "default": true },
+    { "key": "biometricOnly", "label": "Biometric Only", "type": "bool", "default": true }
+  ]
+},
+"deeplink": {
+  "fields": [
+    {
+      "key": "getInitialLink",
+      "label": "Fetch Initial Link",
+      "type": "bool",
+      "default": true
+    }
+  ]
+},
+"device_fingerprint": {
+  "fields": []
+},
+"digi_scan_image": {
+  "fields": [
+    {
+      "name": "maxSizeInMB",
+      "label": "Max Size (MB)",
+      "type": "double",
+      "defaultValue": 1.0
+    },
+    {
+      "name": "pages",
+      "label": "Pages (optional)",
+      "type": "int",
+      "defaultValue": 5
+    }
+  ]
+},
+"digi_scan_pdf": {
+  "fields": [
+    {
+      "name": "maxSizeInMB",
+      "label": "Max Size (MB)",
+      "type": "double",
+      "defaultValue": 2.0
+    },
+    {
+      "name": "pages",
+      "label": "Pages (optional)",
+      "type": "int",
+      "defaultValue": 6
+    }
+  ]
+},
+"file_operations": {
+  "fields": [
+    {
+      "key": "allowMultiple",
+      "label": "Allow Multiple Selection",
+      "type": "bool",
+      "default": false
+    },
+    {
+      "key": "additionalExtensions",
+      "label": "Additional Extensions",
+      "type": "text",
+      "default": "pdf,docx,txt"
+    },
+    {
+      "key": "maxFileSizeInMB",
+      "label": "Max File Size (MB)",
+      "type": "int",
+      "default": 5
+    }
+  ]
+},
+"network_state_perm": {
+  "fields": [
+    {
+      "key": "url",
+      "label": "Test URL",
+      "type": "text",
+      "default": "https://www.i-exceed.com/"
+    }
+  ]
+},
+"apz_peripherals": {
+  "fields": [
+    {
+      "key": "operation",
+      "label": "Select Operation",
+      "type": "dropdown",
+      "options": ["battery", "bluetooth", "nfc"],
+      "default": "battery"
+    }
+  ]
+},
+"apz_screen_security": {
+  "fields": [
+    {
+      "key": "operation",
+      "label": "Select Operation",
+      "type": "dropdown",
+      "options": ["enable", "disable", "status"],
+      "default": "status"
+    }
+  ]
+},
+"apz_share": {
+  "fields": [
+    {
+      "key": "shareType",
+      "label": "Share Type",
+      "type": "dropdown",
+      "options": ["text", "file", "multiple_files", "asset_file"],
+      "default": "text"
+    },
+    {
+      "key": "title",
+      "label": "Title",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "text",
+      "label": "Text",
+      "type": "text",
+      "required": false
+    },
+    {
+      "key": "subject",
+      "label": "Subject (for text)",
+      "type": "text",
+      "required": false,
+      "dependsOn": {
+        "key": "shareType",
+        "value": "text"
+      }
+    },
+    {
+      "key": "filePath",
+      "label": "File Path (for single file)",
+      "type": "text",
+      "required": false,
+      "dependsOn": {
+        "key": "shareType",
+        "value": "file"
+      }
+    },
+    {
+      "key": "filePaths",
+      "label": "File Paths (comma-separated)",
+      "type": "text",
+      "required": false,
+      "dependsOn": {
+        "key": "shareType",
+        "value": "multiple_files"
+      }
+    },
+    {
+      "key": "assetPath",
+      "label": "Asset Path",
+      "type": "text",
+      "required": false,
+      "dependsOn": {
+        "key": "shareType",
+        "value": "asset_file"
+      }
+    },
+    {
+      "key": "mimeType",
+      "label": "MIME Type (for asset file)",
+      "type": "text",
+      "default": "application/octet-stream",
+      "required": false,
+      "dependsOn": {
+        "key": "shareType",
+        "value": "asset_file"
+      }
+    }
+  ]
+},
+"apz_webview": {
+  "fields": [
+    {
+      "key": "url",
+      "label": "Webview URL",
+      "type": "text",
+      "default": "https://example.com"
+    },
+    {
+      "key": "usePost",
+      "label": "Use POST Request?",
+      "type": "switch",
+      "default": false
+    },
+    {
+      "key": "postData",
+      "label": "POST Data (key1=value1&key2=value2)",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "key": "showAcceptReject",
+      "label": "Show Accept/Decline Buttons?",
+      "type": "switch",
+      "default": false
+    }
+  ]
+},
+"apz_idle_timeout": {
+  "fields": [
+    {
+      "key": "timeoutSeconds",
+      "label": "Timeout Duration (seconds)",
+      "type": "number",
+      "default": 10
+    },
+    {
+      "key": "triggerNow",
+      "label": "Trigger Timeout Immediately?",
+      "type": "switch",
+      "default": false
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+}
