@@ -73,15 +73,6 @@
       { "key": "cropTitle", "label": "Crop Title", "type": "text", "default": "Crop Image" }
     ]
   },
-  "qr": {
-    "fields": [
-      { "key": "text", "label": "QR Text", "type": "text" },
-      { "key": "height", "label": "Height", "type": "int", "default": 120, "optional": true },
-      { "key": "width", "label": "Width", "type": "int", "default": 120, "optional": true },
-      { "key": "margin", "label": "Margin", "type": "int", "default": 0, "optional": true },
-      { "key": "eccLevel", "label": "Error Correction Level", "type": "dropdown", "options": ["low", "medium", "quartile", "high"], "default": "low", "optional": true }
-    ]
-  },
   "screenshot": {
     "fields": [
       { "key": "text", "label": "Text to Share", "type": "text" },
@@ -104,51 +95,52 @@
     { "key": "biometricOnly", "label": "Biometric Only", "type": "bool", "default": true }
   ]
 },
+
+
+
 "deeplink": {
   "fields": [
     {
-      "key": "getInitialLink",
-      "label": "Fetch Initial Link",
-      "type": "bool",
-      "default": true
+      "key": "url",
+      "label": "URL",
+      "type": "text",
+      "default": "https://www.google.com"
     }
   ]
 },
+"qr_scanner": {
+    "fields": []
+  },
 "device_fingerprint": {
   "fields": []
 },
-"digi_scan_image": {
-  "fields": [
-    {
-      "name": "maxSizeInMB",
-      "label": "Max Size (MB)",
-      "type": "double",
-      "defaultValue": 1.0
-    },
-    {
-      "name": "pages",
-      "label": "Pages (optional)",
-      "type": "int",
-      "defaultValue": 5
-    }
-  ]
-},
-"digi_scan_pdf": {
-  "fields": [
-    {
-      "name": "maxSizeInMB",
-      "label": "Max Size (MB)",
-      "type": "double",
-      "defaultValue": 2.0
-    },
-    {
-      "name": "pages",
-      "label": "Pages (optional)",
-      "type": "int",
-      "defaultValue": 6
-    }
-  ]
-},
+
+"digi_scan": {
+    "fields": [
+      {
+        "key": "scanType",
+        "label": "Scan Type",
+        "type": "dropdown",
+        "options": ["image", "pdf"],
+        "default": "image"
+      },
+      {
+        "key": "maxSizeInMB",
+        "label": "Max Size (MB)",
+        "type": "double",
+        "default": 1.0
+      },
+      {
+        "key": "pages",
+        "label": "Pages (optional)",
+        "type": "int",
+        "default": 5
+      }
+    ]
+  },
+
+
+
 "file_operations": {
   "fields": [
     {
@@ -322,15 +314,8 @@
   ]
 }
 
-
-
-
-
-
-
-
-
-
-
-
 }
+
+
+
+

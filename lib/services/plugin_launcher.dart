@@ -5,7 +5,9 @@ import 'package:apz_gps/location_exception.dart';
 import 'package:apz_idle_timeout/apz_idle_timeout.dart';
 import 'package:apz_network_state_perm/network_state_model.dart';
 import 'package:apz_notification/apz_notification.dart';
+import 'package:apz_qr/apz_qr_scanner.dart';
 import 'package:apz_qr/generator/apz_qr_generator.dart';
+import 'package:apz_qr/models/apz_qr_scanner_callbacks.dart';
 import 'package:apz_screenshot/apz_screenshot.dart';
 import 'package:apz_utils/apz_utils.dart';
 import 'package:apz_webview/models/accept_decline_btn.dart';
@@ -54,6 +56,10 @@ import 'package:apz_peripherals/apz_peripherals.dart';
 import 'package:apz_screen_security/apz_screen_security.dart';
 import 'package:apz_share/apz_share.dart';
 import 'package:apz_webview/apz_webview.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+
+
 class PluginLauncher {
   static Future<dynamic> launch(
     PluginMetadata plugin,
@@ -195,7 +201,7 @@ case 'contact':
           logs.add('Contact picked successfully: ${picked.fullName}');
           
           // Check for thumbnail
-          if (picked.thumbnail != null && picked.thumbnail!.isNotEmpty) {
+          if (picked.thumbnail != null) {
             logs.add('Thumbnail found for contact: ${picked.fullName}');
           } else {
             logs.add('No thumbnail found for contact: ${picked.fullName}');
@@ -212,7 +218,7 @@ case 'contact':
             'fullName': picked.fullName,
             'phoneNumber': picked.phoneNumber,
             'email': picked.email,
-            'thumbnail': picked.thumbnail,
+            'thumbnail': picked.thumbnail != null ? base64Encode(picked.thumbnail!) : null,
             'logs': logs,
           };
         } catch (e, st) {
@@ -242,38 +248,53 @@ case 'contact':
         return result;
 
       case 'device_info':
-        final manager = APZDeviceInfoManager();
-        final info = await manager.loadDeviceInfo();
-        if (info == null) return null;
-        // Manually build a map from the info object
-        return {
-          'brand': info.brand,
-          'model': info.model,
-          'osVersion': info.version,
-          'manufacturer': info.manufacturer,
-          'board': info.board,
-          'bootloader': info.bootloader,
-          'display': info.display,
-          'fingerprint': info.fingerprint,
-          'hardware': info.hardware,
-          'host': info.host,
-          'id': info.id,
-          'product': info.product,
-          'tags': info.tags,
-          'isPhysicalDevice': info.isPhysicalDevice,
-          'isiosApponMac': info.isIosAppOnMac,
-          'type':info.type,
-          'devicename': info.deviceName,
-          //'baseOs':info.baseOs,
-          // 'previewSdk':info.previewSdk,
-          // 'securityPatch':info.securityPatch,
-          // 'Codename':info.Codename,
-          // 'release':info.release,
-          // 'version': info.version,
-          // 'incremental':info.incremental,
-          // 'sdkInt':info.sdkInt
-
-        };
+        final List<String> logs = [];
+        try {
+          logs.add('Device Info plugin started');
+          final manager = APZDeviceInfoManager();
+          final info = await manager.loadDeviceInfo();
+          if (info == null) {
+            logs.add('No device info returned from plugin');
+            return {'error': 'Failed to get device info', 'logs': logs};
+          }
+          logs.add('Device info retrieved successfully');
+          final result = {
+            'brand': info.brand,
+            'model': info.model,
+            'osVersion': info.version?.release,
+            'manufacturer': info.manufacturer,
+            'board': info.board,
+            'bootloader': info.bootloader,
+            'display': info.display,
+            'fingerprint': info.fingerprint,
+            'hardware': info.hardware,
+            'host': info.host,
+            'id': info.id,
+            'product': info.product,
+            'tags': info.tags,
+            'isPhysicalDevice': info.isPhysicalDevice,
+            'isiosApponMac': info.isIosAppOnMac,
+            'type': info.type,
+            'devicename': info.deviceName,
+            'baseOs': info.version?.baseOS,
+            'previewSdk': info.version?.previewSdkInt,
+            'securityPatch': info.version?.securityPatch,
+            'codename': info.version?.codename,
+            'release': info.version?.release,
+            'incremental': info.version?.incremental,
+            'sdkInt': info.version?.sdkInt,
+            'logs': logs,
+          };
+          return result;
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[DeviceInfo] Exception: $e', e, st);
+          return {
+            'error': 'Failed to get device info. Please try again.',
+            'logs': logs,
+          };
+        }
     
 
 case 'gps':
@@ -312,58 +333,88 @@ case 'gps':
     return {'result': 'Review dialog requested'};
 
   case 'inapp_update':
-    final updater = ApzInAppUpdate();
-    final updateType = formData['updateType'] ?? 'check';
-    if (updateType == 'check') {
-      final info = await updater.checkForUpdate();
-      return {
-        'updateAvailability': info.updateAvailability.toString(),
-        'immediateUpdateAllowed': info.immediateUpdateAllowed,
-        'flexibleUpdateAllowed': info.flexibleUpdateAllowed,
-      };
-    } else if (updateType == 'immediate') {
-      await updater.performImmediateUpdate();
-      return {'result': 'Immediate update started'};
-    } else if (updateType == 'flexible') {
-      await updater.startFlexibleUpdate();
-      return {'result': 'Flexible update started'};
-    }
-    return {'result': 'Unknown update type'};
+        final List<String> logs = [];
+        try {
+          logs.add('In-App Update plugin started');
+          final updater = ApzInAppUpdate();
+          final updateType = formData['updateType'] ?? 'check';
+          logs.add('Update type: $updateType');
+
+          if (updateType == 'check') {
+            logs.add('Checking for update...');
+            final info = await updater.checkForUpdate();
+            logs.add('Update info: $info');
+            return {
+              'updateAvailability': info.updateAvailability.toString(),
+              'immediateUpdateAllowed': info.immediateUpdateAllowed,
+              'flexibleUpdateAllowed': info.flexibleUpdateAllowed,
+              'logs': logs,
+            };
+          } else if (updateType == 'immediate') {
+            logs.add('Performing immediate update...');
+            final result = await updater.performImmediateUpdate();
+            logs.add('Immediate update result: $result');
+            return {'result': 'Immediate update started', 'logs': logs};
+          } else if (updateType == 'flexible') {
+            logs.add('Starting flexible update...');
+            final result = await updater.startFlexibleUpdate();
+            logs.add('Flexible update result: $result');
+            updater.installUpdateListener.listen((status) {
+              logs.add('Install status: $status');
+            });
+            return {'result': 'Flexible update started', 'logs': logs};
+          }
+          return {'result': 'Unknown update type', 'logs': logs};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[InAppUpdate] Exception: $e', e, st);
+          return {
+            'error': 'Failed to perform in-app update. Please try again.',
+            'logs': logs,
+          };
+        }
 
  
 case 'network_state':
-  logger.info('[NetworkState] Plugin started');
-  try {
-    final plugin = ApzNetworkState();
-    final model = await plugin.getNetworkState();
+        final List<String> logs = [];
+        try {
+          logs.add('Network State plugin started');
+          final plugin = ApzNetworkState();
 
-    if (model == null) {
-      logger.error('[NetworkState] Failed: model is null');
-      return {'error': 'Failed to fetch network state'};
-    }
+          logs.add('Getting network state...');
+          final model = await plugin.getNetworkState();
 
-    final result = {
-      'mcc': model.mcc,
-      'mnc': model.mnc,
-      'networkType': model.networkType,
-      'connectionType': model.connectionType,
-      'isVpn': model.isVpn,
-      'ipAddress': model.ipAddress,
-      'bandwidthMbps': model.bandwidthMbps,
-      'latency': model.latency,
-      'ssid': model.ssid,
-      'signalStrengthLevel': model.signalStrengthLevel,
-    };
+          if (model == null) {
+            logs.add('No data returned from plugin');
+            return {'error': 'Failed to fetch network state', 'logs': logs};
+          }
 
-    logger.info('[NetworkState] Result: $result');
-    return result;
-  } on PermissionException catch (e) {
-    logger.error('[NetworkState] PermissionException: ${e.message}');
-    return {'error': 'Permission denied: ${e.message}'};
-  } catch (e, st) {
-    logger.error('[NetworkState] Unexpected error: $e\n$st');
-    return {'error': 'Unexpected error occurred.'};
-  }
+          final result = {
+            'mcc': model.mcc,
+            'mnc': model.mnc,
+            'networkType': model.networkType,
+            'connectionType': model.connectionType,
+            'isVpn': model.isVpn,
+            'ipAddress': model.ipAddress,
+            'bandwidthMbps': model.bandwidthMbps,
+            'latency': model.latency,
+            'ssid': model.ssid,
+            'signalStrengthLevel': model.signalStrengthLevel,
+          };
+
+          logs.add('Network state received: $result');
+          result['logs'] = logs;
+          return result;
+        } on PermissionException catch (e) {
+          logs.add('PermissionException: ${e.message}');
+          return {'error': 'Permission denied: ${e.message}', 'logs': logs};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[NetworkState] Unexpected error: $e\n$st');
+          return {'error': 'Unexpected error occurred.', 'logs': logs};
+        }
 
   case 'notification':
     await ApzNotification.instance.showLocalNotification(
@@ -372,14 +423,51 @@ case 'network_state':
     );
     return {'result': 'Notification triggered'};
 
-  // case 'pdf_viewer':
-  //   // You may want to launch a new screen to show the PDF, or just return the config for now
-  //   return {
-  //     'source': formData['source'],
-  //     'sourceType': formData['sourceType'],
-  //     'password': formData['password'],
-  //     'headers': formData['headers'],
-  //   };
+  case 'pdf_viewer':
+        final List<String> logs = [];
+        try {
+          logs.add('PDF Viewer plugin started');
+          final source = formData['source'];
+          final sourceType = formData['sourceType'];
+          final password = formData['password'];
+          final headers = formData['headers'];
+
+          final config = PdfviewerModel(
+            enterTitleText: 'Enter Password',
+            okButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            pdfErrorText: 'Failed to load PDF',
+            emptyPasswordErrorText: 'Password cannot be empty',
+            scrollThumbColor: Colors.blue,
+            pageNumberTextColor: Colors.white,
+          );
+
+          final controller = ApzPdfViewerController();
+
+          final pdfViewer = ApzPdfViewer(
+            source: source,
+            sourceType: ApzPdfSourceType.values
+                .firstWhere((e) => e.toString().split('.').last == sourceType),
+            controller: controller,
+            config: config,
+            headers: headers,
+          );
+
+          logs.add('PDF Viewer configured');
+
+          return {
+            'widget': pdfViewer,
+            'logs': logs,
+          };
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[PDFViewer] Exception: $e', e, st);
+          return {
+            'error': 'Failed to open PDF Viewer. Please try again.',
+            'logs': logs,
+          };
+        }
 
   // case 'photopicker':
   //   final picker = ApzPhotopicker();
@@ -442,15 +530,121 @@ case 'photopicker':
   //   );
   //   return {'qrBytes': bytes};
 
+case 'qr':
+        final List<String> logs = [];
+        try {
+          logs.add('QR Generator plugin started');
+          final generator = ApzQRGenerator();
+          final text = formData['text'] ?? '';
+          final height = formData['height'] ?? 200;
+          final width = formData['width'] ?? 200;
+          final margin = formData['margin'] ?? 0;
+          logs.add('Generating QR code with text: "$text", height: $height, width: $width, margin: $margin');
+          final bytes = await generator.generate(
+            text: text,
+            height: height,
+            width: width,
+            margin: margin,
+          );
+          logs.add('QR code generated successfully');
+          return {'qrBytes': bytes, 'logs': logs};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[QRGenerator] Exception: $e', e, st);
+          return {
+            'error': 'Failed to generate QR code. Please try again.',
+            'logs': logs,
+          };
+        }
+
+case 'qr_scanner':
+        final List<String> logs = [];
+        try {
+          logs.add('QR Scanner plugin started');
+          final completer = Completer<Map<String, dynamic>>();
+          final scanner = ApzQrScanner(
+            callbacks: ApzQrScannerCallbacks(
+              onScanSuccess: (code) {
+                logs.add('Scan successful: ${code?.text}');
+                if(!completer.isCompleted) {
+                  completer.complete({
+                    'result': code?.text,
+                    'logs': logs,
+                  });
+                }
+              },
+              onScanFailure: (code) {
+                logs.add('Scan failed: ${code?.error}');
+                 if(!completer.isCompleted) {
+                  completer.complete({
+                    'error': 'Failed to scan QR code.',
+                    'logs': logs,
+                  });
+                }
+              },
+              onError: (error) {
+                logs.add('Error: $error');
+                if(!completer.isCompleted) {
+                  completer.complete({
+                    'error': 'An error occurred during scanning.',
+                    'logs': logs,
+                  });
+                }
+              },
+            ),
+          );
+
+          logs.add('QR Scanner configured');
+
+          return {
+            'widget': Scaffold(
+              appBar: AppBar(title: const Text('QR Scanner')),
+              body: scanner,
+            ),
+            'logs': logs,
+            'completer': completer,
+          };
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[QRScanner] Exception: $e', e, st);
+          return {
+            'error': 'Failed to open QR Scanner. Please try again.',
+            'logs': logs,
+          };
+        }
 
   case 'screenshot':
-    final screenshot = ApzScreenshot();
-    final result = await screenshot.captureAndShare(
-      context,
-      text: formData['text'] ?? '',
-      customFileName: formData['customFileName'],
-    );
-    return {'result': result};
+        final List<String> logs = [];
+        try {
+          logs.add('Screenshot plugin started');
+          final security = ApzScreenSecurity();
+          final isSecure = await security.isScreenSecureEnabled();
+
+          if (isSecure) {
+            logs.add('Screen security is enabled, screenshot is disabled');
+            return {'error': 'Screenshot is disabled because screen security is enabled.', 'logs': logs};
+          }
+
+          logs.add('Screen security is disabled, taking screenshot...');
+          final screenshot = ApzScreenshot();
+          final result = await screenshot.captureAndShare(
+            context,
+            text: formData['text'] ?? '',
+            customFileName: formData['customFileName'],
+          );
+          logs.add('Screenshot result: $result');
+          return {'result': result, 'logs': logs};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[Screenshot] Exception: $e', e, st);
+          return {
+            'error': 'Failed to take screenshot. Please try again.',
+            'logs': logs,
+          };
+        }
 
   case 'send_sms':
     final sendSMS = ApzSendSMS();
@@ -462,40 +656,56 @@ case 'photopicker':
     
   case 'app_switch':
   final switchPlugin = ApzAppSwitch();
-  final completer = Completer<Map<String, dynamic>>();
+  final logs = <String>['App Switch plugin started, listening for events...'];
+  final controller = StreamController<Map<String, dynamic>>();
 
   switchPlugin.lifecycleStream.listen(
     (AppLifecycleState state) {
-      completer.complete({
+      final logMessage = 'App lifecycle state changed: ${describeEnum(state)}';
+      logs.add(logMessage);
+      controller.add({
         'state': describeEnum(state),
+        'logs': List.from(logs), // Send a copy
       });
     },
     onError: (error) {
-      completer.completeError(error);
+      final logMessage = 'Error in app switch stream: $error';
+      logs.add(logMessage);
+      controller.add({
+        'error': logMessage,
+        'logs': List.from(logs),
+      });
+      controller.close();
+    },
+    onDone: () {
+      controller.close();
     },
   );
-case 'biometric':
-  final biometric = ApzBiometric();
 
-  final result = await biometric.authenticate(
-    reason: formData['reason'] ?? 'Authenticate to access the app',
-    stickyAuth: formData['stickyAuth'] ?? true,
-    biometricOnly: formData['biometricOnly'] ?? true,
-    androidAuthMessage: const AndroidAuthMessages(
-      signInTitle: 'Biometric Authentication',
-      cancelButton: 'Cancel',
-      biometricHint: 'Touch sensor',
-    ),
-    // iosAuthMessage: const IOSAuthMessages(
-    //   localizedReason: 'Authenticate to access the app',
-    //   cancelButton: 'OK',
-    // ),
-  );
+  // Return the stream so the UI can listen to it
+  return {'stream': controller.stream};
+// case 'biometric':
+//   final biometric = ApzBiometric();
 
-  return {
-    'status': result.status,
-    'message': result.message,
-  };
+//   final result = await biometric.authenticate(
+//     reason: formData['reason'] ?? 'Authenticate to access the app',
+//     stickyAuth: formData['stickyAuth'] ?? true,
+//     biometricOnly: formData['biometricOnly'] ?? true,
+//     androidAuthMessage: const AndroidAuthMessages(
+//       signInTitle: 'Biometric Authentication',
+//       cancelButton: 'Cancel',
+//       biometricHint: 'Touch sensor',
+//     ),
+//     // iosAuthMessage: const IOSAuthMessages(
+//     //   localizedReason: 'Authenticate to access the app',
+//     //   cancelButton: 'OK',
+//     // ),
+//   );
+
+//   return {
+//     'status': result.status,
+//     'message': result.message,
+//   };
 
   // case 'biometric':
   // final biometric = ApzBiometric();
@@ -520,25 +730,76 @@ case 'biometric':
   //   'message': result.message,
   // };
 
+case 'biometric':
+        final List<String> logs = [];
+        try {
+          logs.add('Biometric plugin started');
+          final biometric = ApzBiometric();
+          final result = await biometric.authenticate(
+            reason: formData['reason'] ?? 'Authenticate to access the app',
+            stickyAuth: formData['stickyAuth'] ?? true,
+            biometricOnly: formData['biometricOnly'] ?? true,
+          );
+          logs.add('Authentication result: ${result.status}');
+          return {
+            'status': result.status,
+            'message': result.message,
+            'logs': logs,
+          };
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[Biometric] Exception: $e', e, st);
+          return {
+            'error': 'Failed to authenticate. Please try again.',
+            'logs': logs,
+          };
+        }
+
 case 'deeplink':
-  final deeplink = ApzDeeplink();
+        final List<String> logs = [];
+        try {
+          logs.add('Deeplink plugin started');
+          final deeplink = ApzDeeplink();
 
-  // Always initialize the listener
-  await deeplink.initialize();
+          // Always initialize the listener
+          await deeplink.initialize();
+          logs.add('Deeplink listener initialized');
 
-  if (formData['getInitialLink'] == true) {
-    final initialLink = await deeplink.getInitialLink();
-    return {
-      'initialLink': initialLink,
-    };
-  } else {
-    // Use stream to get a link — for now we just return a placeholder
-    // In a real app, you’d listen and route accordingly
-    return {
-      'streamListening': true,
-      'note': 'Live stream listening enabled. Handle via StreamBuilder or subscription.',
-    };
-  }
+          if (formData['getInitialLink'] == true) {
+            logs.add('Getting initial link...');
+            final initialLink = await deeplink.getInitialLink();
+            logs.add('Initial link: $initialLink');
+            return {
+              'initialLink': initialLink,
+              'logs': logs,
+            };
+          } else {
+            logs.add('Listening for deeplink stream...');
+            final completer = Completer<Map<String, dynamic>>();
+            deeplink.linkStream.listen((data) {
+              logs.add('Deeplink received: $data');
+              completer.complete({
+                'deeplink': data.toString(),
+                'logs': logs,
+              });
+            });
+            return {
+              'streamListening': true,
+              'note': 'Live stream listening enabled. Handle via StreamBuilder or subscription.',
+              'logs': logs,
+              'completer': completer,
+            };
+          }
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[Deeplink] Exception: $e', e, st);
+          return {
+            'error': 'Failed to handle deeplink. Please try again.',
+            'logs': logs,
+          };
+        }
 // case 'device_fingerprint':
 //   final fingerprint = FingerprintData();
 //   final utils = FingerprintUtils();
@@ -548,6 +809,37 @@ case 'deeplink':
 //     'fingerprint': result,
 //   };
 
+case 'digi_scan':
+        final List<String> logs = [];
+        try {
+          logs.add('Digi Scan plugin started');
+          final scanner = ApzDigiScan();
+          final scanType = formData['scanType'] ?? 'image';
+          final maxSizeInMB =
+              double.tryParse(formData['maxSizeInMB'].toString()) ?? 1.0;
+          final pages = int.tryParse(formData['pages'].toString()) ?? 5;
+
+          if (scanType == 'image') {
+            logs.add('Scanning as image...');
+            final result =
+                await scanner.scanAsImage(maxSizeInMB, pages: pages);
+            logs.add('Scan result: $result');
+            return {'scannedImages': result, 'logs': logs};
+          } else {
+            logs.add('Scanning as PDF...');
+            final result = await scanner.scanAsPdf(maxSizeInMB, pages: pages);
+            logs.add('Scan result: $result');
+            return {'pdfUri': result, 'logs': logs};
+          }
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[DigiScan] Exception: $e', e, st);
+          return {
+            'error': 'Failed to scan document. Please try again.',
+            'logs': logs,
+          };
+        }
 
   case 'device_fingerprint':
   final plugin = ApzDeviceFingerprint();
@@ -603,109 +895,216 @@ case 'file_operations':
     }).toList(),
   };
 case 'network_state_perm':
-  final plugin = ApzNetworkStatePerm();
-  final String url = formData['url'] ?? "https://www.i-exceed.com/";
+        final List<String> logs = [];
+        try {
+          logs.add('Network State Perm plugin started');
+          final plugin = ApzNetworkStatePerm();
+          final String url = formData['url'] ?? "https://www.i-exceed.com/";
 
-  final NetworkStateModel? result = await plugin.getNetworkState(url: url);
-  if (result == null) return {"error": "No data returned"};
+          logs.add('Getting network state with permissions...');
+          final NetworkStateModel? result = await plugin.getNetworkState(url: url);
+          if (result == null) {
+            logs.add('No data returned from plugin');
+            return {"error": "No data returned", "logs": logs};
+          }
 
-  return result.toMap();
+          logs.add('Network state received: ${result.toMap()}');
+          final map = result.toMap();
+          map['logs'] = logs;
+          return map;
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[NetworkStatePerm] Exception: $e', e, st);
+          return {
+            'error': 'Failed to get network state. Please try again.',
+            'logs': logs,
+          };
+        }
 case 'apz_peripherals':
-  final plugin = APZPeripherals();
-  final String operation = formData['operation'];
+        final List<String> logs = [];
+        try {
+          logs.add('Peripherals plugin started');
+          final plugin = APZPeripherals();
+          final String operation = formData['operation'];
+          logs.add('Operation: $operation');
 
-  switch (operation) {
-    case 'battery':
-      final int? level = await plugin.getBatteryLevel();
-      return {'batteryLevel': '$level%'};
+          switch (operation) {
+            case 'battery':
+              final int? level = await plugin.getBatteryLevel();
+              logs.add('Battery level: $level%');
+              return {'batteryLevel': '$level%', 'logs': logs};
 
-    case 'bluetooth':
-      final bool? isBluetoothSupported = await plugin.isBluetoothSupported();
-      return {'bluetoothSupported': isBluetoothSupported.toString()};
+            case 'bluetooth':
+              final bool? isBluetoothSupported = await plugin.isBluetoothSupported();
+              logs.add('Bluetooth supported: $isBluetoothSupported');
+              return {'bluetoothSupported': isBluetoothSupported.toString(), 'logs': logs};
 
-    case 'nfc':
-      final bool? isNFCSupported = await plugin.isNFCSupported();
-      return {'nfcSupported': isNFCSupported.toString()};
+            case 'nfc':
+              final bool? isNFCSupported = await plugin.isNFCSupported();
+              logs.add('NFC supported: $isNFCSupported');
+              return {'nfcSupported': isNFCSupported.toString(), 'logs': logs};
 
-    default:
-      return {'error': 'Unknown operation'};
-  }
+            default:
+              logs.add('Unknown operation');
+              return {'error': 'Unknown operation', 'logs': logs};
+          }
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[Peripherals] Exception: $e', e, st);
+          return {
+            'error': 'Failed to perform peripherals operation. Please try again.',
+            'logs': logs,
+          };
+        }
 case 'apz_screen_security':
-  final security = ApzScreenSecurity();
-  final String operation = formData['operation'];
+        final List<String> logs = [];
+        try {
+          logs.add('Screen Security plugin started');
+          final security = ApzScreenSecurity();
+          final String operation = formData['operation'];
+          logs.add('Operation: $operation');
 
-  try {
-    switch (operation) {
-      case 'enable':
-        final result = await security.enableScreenSecurity();
-        return {'action': 'enable', 'success': result.toString()};
-      case 'disable':
-        final result = await security.disableScreenSecurity();
-        return {'action': 'disable', 'success': result.toString()};
-      case 'status':
-        final result = await security.isScreenSecureEnabled();
-        return {'action': 'status', 'isSecureEnabled': result.toString()};
-      default:
-        return {'error': 'Invalid operation'};
-    }
-  } catch (e) {
-    return {'error': e.toString()};
-  }
+          switch (operation) {
+            case 'enable':
+              final result = await security.enableScreenSecurity();
+              logs.add('Enable screen security result: $result');
+              return {'action': 'enable', 'success': result.toString(), 'logs': logs};
+            case 'disable':
+              final result = await security.disableScreenSecurity();
+              logs.add('Disable screen security result: $result');
+              return {'action': 'disable', 'success': result.toString(), 'logs': logs};
+            case 'status':
+              final result = await security.isScreenSecureEnabled();
+              logs.add('Screen security status: $result');
+              return {'action': 'status', 'isSecureEnabled': result.toString(), 'logs': logs};
+            default:
+              logs.add('Invalid operation');
+              return {'error': 'Invalid operation', 'logs': logs};
+          }
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[ScreenSecurity] Exception: $e', e, st);
+          return {
+            'error': 'Failed to perform screen security operation. Please try again.',
+            'logs': logs,
+          };
+        }
 case 'apz_share':
-  final share = ApzShare();
-  final String type = formData['shareType'];
-  final String title = formData['title'] ?? '';
-  final String? text = formData['text'];
-  final String? subject = formData['subject'];
+        final List<String> logs = [];
+        try {
+          logs.add('Share plugin started');
+          final share = ApzShare();
+          final String type = formData['shareType'];
+          final String title = formData['title'] ?? '';
+          final String? text = formData['text'];
+          final String? subject = formData['subject'];
 
-  try {
-    switch (type) {
-      case 'text':
-        await share.shareText(
-          title: title,
-          text: text ?? '',
-          subject: subject,
-        );
-        return {'type': 'text', 'status': 'Shared successfully'};
+          logs.add('Share type: $type');
 
-      case 'file':
-        final String filePath = formData['filePath'];
-        await share.shareFile(
-          filePath: filePath,
-          title: title,
-          text: text,
-        );
-        return {'type': 'file', 'filePath': filePath, 'status': 'Shared successfully'};
+          switch (type) {
+            case 'text':
+              logs.add('Sharing text: "$text" with title "$title" and subject "$subject"');
+              await share.shareText(
+                title: title,
+                text: text ?? '',
+                subject: subject,
+              );
+              logs.add('Text shared successfully');
+              return {'type': 'text', 'status': 'Shared successfully', 'logs': logs};
 
-      case 'multiple_files':
-        final List<String> filePaths = (formData['filePaths'] as String)
-            .split(',')
-            .map((s) => s.trim())
-            .toList();
-        await share.shareMultipleFiles(
-          filePaths: filePaths,
-          title: title,
-          text: text,
-        );
-        return {'type': 'multiple_files', 'filePaths': filePaths, 'status': 'Shared successfully'};
+            case 'file':
+              final String filePath = formData['filePath'];
+              logs.add('Sharing file: "$filePath" with title "$title" and text "$text"');
+              await share.shareFile(
+                filePath: filePath,
+                title: title,
+                text: text,
+              );
+              logs.add('File shared successfully');
+              return {'type': 'file', 'filePath': filePath, 'status': 'Shared successfully', 'logs': logs};
 
-      case 'asset_file':
-        final String assetPath = formData['assetPath'];
-        final String mimeType = formData['mimeType'] ?? 'application/octet-stream';
-        await share.shareAssetFile(
-          assetPath: assetPath,
-          title: title,
-          text: text,
-          mimeType: mimeType,
-        );
-        return {'type': 'asset_file', 'assetPath': assetPath, 'status': 'Shared successfully'};
+            case 'multiple_files':
+              final List<String> filePaths = (formData['filePaths'] as String)
+                  .split(',')
+                  .map((s) => s.trim())
+                  .toList();
+              logs.add('Sharing multiple files: "$filePaths" with title "$title" and text "$text"');
+              await share.shareMultipleFiles(
+                filePaths: filePaths,
+                title: title,
+                text: text,
+              );
+              logs.add('Multiple files shared successfully');
+              return {'type': 'multiple_files', 'filePaths': filePaths, 'status': 'Shared successfully', 'logs': logs};
 
-      default:
-        return {'error': 'Invalid shareType selected'};
-    }
-  } catch (e) {
-    return {'error': e.toString()};
-  }
+            case 'asset_file':
+              final String assetPath = formData['assetPath'];
+              final String mimeType = formData['mimeType'] ?? 'application/octet-stream';
+              logs.add('Sharing asset file: "$assetPath" with title "$title", text "$text", and mimeType "$mimeType"');
+              await share.shareAssetFile(
+                assetPath: assetPath,
+                title: title,
+                text: text,
+                mimeType: mimeType,
+              );
+              logs.add('Asset file shared successfully');
+              return {'type': 'asset_file', 'assetPath': assetPath, 'status': 'Shared successfully', 'logs': logs};
+
+            default:
+              logs.add('Invalid share type selected: $type');
+              return {'error': 'Invalid shareType selected', 'logs': logs};
+          }
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[Share] Exception: $e', e, st);
+          return {
+            'error': 'Failed to share. Please try again.',
+            'logs': logs,
+          };
+        }
+
+case 'apz_idle_timeout':
+        final List<String> logs = [];
+        try {
+          logs.add('Idle Timeout plugin started');
+          final timeoutSeconds = int.tryParse(formData['timeoutSeconds'].toString()) ?? 10;
+          final triggerNow = formData['triggerNow'] ?? false;
+          
+          final idleTimeout = ApzIdleTimeout();
+          idleTimeout.start(
+            () async {
+              logs.add('Idle timeout callback triggered');
+              // In a real app, you would implement a logout or other action here.
+              // For this test app, we'll just log the event.
+            },
+            timeout: Duration(seconds: timeoutSeconds),
+          );
+
+          if (triggerNow) {
+            idleTimeout.reset();
+            logs.add('Idle timeout triggered manually');
+          } else {
+            logs.add('Idle timeout started');
+          }
+
+          return {
+            'status': 'IdleTimeout started',
+            'timeout': timeoutSeconds,
+            'logs': logs,
+          };
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[IdleTimeout] Exception: $e', e, st);
+          return {
+            'error': 'Failed to start Idle Timeout. Please try again.',
+            'logs': logs,
+          };
+        }
 
 case 'apz_webview':
   //final context = navigatorKey.currentContext;
