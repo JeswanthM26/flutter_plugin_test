@@ -1814,7 +1814,10 @@ class ResultScreen extends StatelessWidget {
         }
         break;
 
-      case 'contact':
+
+
+
+        case 'contact':
   if (result is Map && result['contacts'] is List) {
     final contacts = result['contacts'] as List;
     final logs = result['logs'] as List<String>?;
@@ -1880,7 +1883,9 @@ class ResultScreen extends StatelessWidget {
 
             // Logs at the bottom, constrained height
             if (logs != null && logs.isNotEmpty)
-              LogView(logs: logs),
+              Expanded(
+                child: LogView(logs: logs),
+              ),
           ],
         );
       },
@@ -1909,6 +1914,103 @@ class ResultScreen extends StatelessWidget {
     content = const Text('No contacts found');
   }
   break;
+
+
+  //     case 'contact':
+  // if (result is Map && result['contacts'] is List) {
+  //   final contacts = result['contacts'] as List;
+  //   final logs = result['logs'] as List<String>?;
+
+  //   content = LayoutBuilder(
+  //     builder: (context, constraints) {
+  //       return Column(
+  //         children: [
+  //           // Contact list (scrollable)
+  //           Expanded(
+  //             child: contacts.isEmpty
+  //                 ? const Center(child: Text('No contacts found.'))
+  //                 : ListView.builder(
+  //                     itemCount: contacts.length,
+  //                     itemBuilder: (context, index) {
+  //                       final contact = contacts[index] as Map<String, dynamic>;
+  //                       final photoBase64 = contact['photoBase64'];
+  //                       Uint8List? photoBytes;
+  //                       if (photoBase64 != null &&
+  //                           photoBase64 is String &&
+  //                           photoBase64.isNotEmpty) {
+  //                         try {
+  //                           photoBytes = base64Decode(photoBase64);
+  //                         } catch (_) {}
+  //                       }
+
+  //                       return Card(
+  //                         margin: const EdgeInsets.only(bottom: 8),
+  //                         child: ListTile(
+  //                           leading: photoBytes != null
+  //                               ? CircleAvatar(
+  //                                   radius: 25,
+  //                                   backgroundImage: MemoryImage(photoBytes),
+  //                                 )
+  //                               : CircleAvatar(
+  //                                   radius: 25,
+  //                                   backgroundColor: Colors.blue[100],
+  //                                   child: Text(
+  //                                     (contact['name'] ?? '?').toString().isNotEmpty
+  //                                         ? (contact['name'] ?? '?')[0].toUpperCase()
+  //                                         : '?',
+  //                                     style: TextStyle(
+  //                                         color: Colors.blue[700], fontSize: 16),
+  //                                   ),
+  //                                 ),
+  //                           title: Text(contact['name'] ?? 'Unknown'),
+  //                           subtitle: Column(
+  //                             crossAxisAlignment: CrossAxisAlignment.start,
+  //                             children: [
+  //                               if (contact['numbers'] != null &&
+  //                                   (contact['numbers'] as List).isNotEmpty)
+  //                                 Text('Phone: ${(contact['numbers'] as List).join(', ')}'),
+  //                               if (contact['emails'] != null &&
+  //                                   (contact['emails'] as List).isNotEmpty)
+  //                                 Text('Email: ${(contact['emails'] as List).join(', ')}'),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   ),
+  //           ),
+
+  //           // Logs at the bottom, constrained height
+  //           if (logs != null && logs.isNotEmpty)
+  //             LogView(logs: logs),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // } else if (result is Map && result['error'] != null) {
+  //   final logs = result['logs'] as List<String>?;
+
+  //   content = Column(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
+  //       const SizedBox(height: 16),
+  //       Text(
+  //         result['error'],
+  //         style: const TextStyle(
+  //             fontSize: 18,
+  //             fontWeight: FontWeight.bold,
+  //             color: Color(0xFF2C3E50)),
+  //         textAlign: TextAlign.center,
+  //       ),
+  //       if (logs != null && logs.isNotEmpty)
+  //         LogView(logs: logs),
+  //     ],
+  //   );
+  // } else {
+  //   content = const Text('No contacts found');
+  // }
+  // break;
 
       case 'contact_picker':
         if (result is Map && result.containsKey('error')) {

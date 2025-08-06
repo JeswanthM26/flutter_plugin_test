@@ -533,11 +533,19 @@ class _PluginFormScreenState extends State<PluginFormScreen> {
       }
     }
   }
-
-  void onGenerate() async {
+void onGenerate() async {
     // Validate required fields
     final missingFields = <String>[];
-    for (final field in widget.plugin.fields) {
+    final visibleFields = widget.plugin.fields.where((field) {
+      if (field.dependsOn == null) {
+        return true;
+      }
+      final dependencyKey = field.dependsOn!['key'];
+      final dependencyValue = field.dependsOn!['value'];
+      return formData[dependencyKey] == dependencyValue;
+    }).toList();
+
+    for (final field in visibleFields) {
       if (field.isRequired) {
         // Get the current value, fallback to default value if not set
         final currentValue = formData[field.key] ?? field.defaultValue;
