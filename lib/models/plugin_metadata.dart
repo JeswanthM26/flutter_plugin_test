@@ -1,4 +1,3 @@
-// Model for a single field in a plugin
 class PluginField {
   final String key;
   final String label;

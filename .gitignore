@@ -9,7 +9,8 @@ android/.gradle/
 *.lock
 *.log
 pubspec.lock
-
+plugins
+assets/pdf.pdf
 
 # Miscellaneous
 *.class

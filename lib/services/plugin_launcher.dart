@@ -27,7 +27,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../models/plugin_metadata.dart';
 
-// Import your plugins here
+
 import 'package:apz_camera/apz_camera.dart';
 import 'package:apz_contact/apz_contact.dart';
 import 'package:apz_contact_picker/apz_contact_picker.dart';
@@ -38,12 +38,9 @@ import 'package:apz_gps/apz_gps.dart';
 import 'package:apz_in_app_review/apz_in_app_review.dart';
 import 'package:apz_inapp_update/apz_inapp_update.dart';
 import 'package:apz_network_state/apz_network_state.dart';
-// import 'package:apz_notification/apz_notification.dart';
 import 'package:apz_pdf_viewer/apz_pdf_viewer.dart';
 import 'package:apz_photopicker/photopicker_image_model.dart';
 import 'package:apz_photopicker/apz_photopicker.dart';
-//import 'package:apz_qr/apz_qr.dart';
-//import 'package:apz_screenshot/apz_screenshot.dart';
 import 'package:apz_send_sms/apz_send_sms.dart';
 import 'package:apz_app_switch/apz_app_switch.dart';
 import 'package:apz_biometric/apz_biometric.dart';
@@ -200,14 +197,12 @@ case 'contact':
           }
           logs.add('Contact picked successfully: ${picked.fullName}');
           
-          // Check for thumbnail
           if (picked.thumbnail != null) {
             logs.add('Thumbnail found for contact: ${picked.fullName}');
           } else {
             logs.add('No thumbnail found for contact: ${picked.fullName}');
           }
           
-          // Check for email
           if (picked.email != null && picked.email!.isNotEmpty) {
             logs.add('Email found for contact: ${picked.fullName}');
           } else {
@@ -298,7 +293,6 @@ case 'contact':
     
 
 case 'gps':
-//final logger = APZLoggerProvider();
   logger.debug('[GPS] Plugin started');
 
   try {
@@ -469,28 +463,6 @@ case 'network_state':
           };
         }
 
-  // case 'photopicker':
-  //   final picker = ApzPhotopicker();
-  //   final imageModel = ImageModel(
-  //     crop: formData['crop'] ?? true,
-  //     quality: formData['quality'] ?? 80,
-  //     fileName: formData['fileName'] ?? 'my_image',
-  //     format: (formData['format'] == 'png') ? ImageFormat.png : ImageFormat.jpeg,
-  //     targetWidth: formData['targetWidth'] ?? 1080,
-  //     targetHeight: formData['targetHeight'] ?? 1080,
-  //     cropTitle: formData['cropTitle'] ?? 'Crop Image',
-  //   );
-  //   final result = await picker.pickFromGallery(
-  //     cancelCallback: () {},
-  //     imagemodel: imageModel,
-  //   );
-  //   if (result == null) return null;
-  //   return {
-  //     'imageFile': result.imageFile,
-  //     'imagePath': result.imageFile?.path,
-  //     'base64': result.base64String,
-  //     'base64SizeKB': result.base64ImageSizeInKB,
-  //   };
  
 
 case 'photopicker':
@@ -517,18 +489,6 @@ case 'photopicker':
     'base64': result.base64String,
     'base64SizeKB': result.base64ImageSizeInKB,
   };
-  // case 'qr':
-  //   // If you want to support both scan and generate, you may need a field to choose
-  //   // For generator:
-  //   final generator = ApzQRGenerator();
-  //   final bytes = await generator.generateQrCode(
-  //     text: formData['text'] ?? '',
-  //     height: formData['height'] ?? 120,
-  //     width: formData['width'] ?? 120,
-  //     margin: formData['margin'] ?? 0,
-  //     // logoBytes: ... // handle if you want to support logo upload
-  //   );
-  //   return {'qrBytes': bytes};
 
 case 'qr':
         final List<String> logs = [];
@@ -682,53 +642,7 @@ case 'qr_scanner':
     },
   );
 
-  // Return the stream so the UI can listen to it
   return {'stream': controller.stream};
-// case 'biometric':
-//   final biometric = ApzBiometric();
-
-//   final result = await biometric.authenticate(
-//     reason: formData['reason'] ?? 'Authenticate to access the app',
-//     stickyAuth: formData['stickyAuth'] ?? true,
-//     biometricOnly: formData['biometricOnly'] ?? true,
-//     androidAuthMessage: const AndroidAuthMessages(
-//       signInTitle: 'Biometric Authentication',
-//       cancelButton: 'Cancel',
-//       biometricHint: 'Touch sensor',
-//     ),
-//     // iosAuthMessage: const IOSAuthMessages(
-//     //   localizedReason: 'Authenticate to access the app',
-//     //   cancelButton: 'OK',
-//     // ),
-//   );
-
-//   return {
-//     'status': result.status,
-//     'message': result.message,
-//   };
-
-  // case 'biometric':
-  // final biometric = ApzBiometric();
-
-  // final result = await biometric.authenticate(
-  //   reason: formData['reason'] ?? 'Authenticate to access the app',
-  //   stickyAuth: formData['stickyAuth'] ?? true,
-  //   biometricOnly: formData['biometricOnly'] ?? true,
-  //   androidAuthMessage: const AndroidAuthMessages(
-  //     signInTitle: 'Biometric Authentication',
-  //     cancelButton: 'Cancel',
-  //     biometricHint: 'Touch sensor',
-  //   ),
-  //   iosAuthMessage: const IOSAuthMessages(
-  //     localizedReason: 'Authenticate to access the app',
-  //     cancelButton: 'OK',
-  //   ),
-  // );
-
-  // return {
-  //   'status': result.status,
-  //   'message': result.message,
-  // };
 
 case 'biometric':
         final List<String> logs = [];
@@ -800,14 +714,6 @@ case 'deeplink':
             'logs': logs,
           };
         }
-// case 'device_fingerprint':
-//   final fingerprint = FingerprintData();
-//   final utils = FingerprintUtils();
-//   final result = await fingerprint.getFingerprint(utils);
-
-//   return {
-//     'fingerprint': result,
-//   };
 
 case 'digi_scan':
         final List<String> logs = [];
@@ -1185,57 +1091,6 @@ case 'apz_webview':
   } catch (e) {
     return {'error': e.toString()};
   }
-
-// case 'apz_idle_timeout':
-//   final int timeoutSeconds = int.tryParse(formData['timeoutSeconds'].toString()) ?? 10;
-//   final bool triggerNow = formData['triggerNow'] ?? false;
-
-//   final context = navigatorKey.currentContext;
-//   if (context == null) return {'error': 'No context found'};
-
-//   final idleTimeout = ApzIdleTimeout();
-
-//   idleTimeout.start(() async {
-//     if (!context.mounted) return;
-//     final bool? result = await showDialog<bool>(
-//       context: context,
-//       builder: (ctx) => AlertDialog(
-//         title: const Text("Idle Timeout"),
-//         content: const Text("No activity detected."),
-//         actions: [
-//           TextButton(
-//             onPressed: () => Navigator.of(ctx).pop(false),
-//             child: const Text("Stay"),
-//           ),
-//           TextButton(
-//             onPressed: () => Navigator.of(ctx).pop(true),
-//             child: const Text("Logout"),
-//           ),
-//         ],
-//       ),
-//     );
-
-//     if (result == true) {
-//       idleTimeout.pause();
-//       //return {'status': 'Logged out due to inactivity'};
-//     } else {
-//       idleTimeout.reset();
-//       //return {'status': 'User chose to stay'};
-//     }
-//   }, timeout: Duration(seconds: timeoutSeconds));
-
-//   if (triggerNow) {
-//     idleTimeout.reset(); // reset to start immediately
-//     return {
-//       'status': 'IdleTimeout started manually',
-//       'timeout': timeoutSeconds,
-//     };
-//   }
-
-//   return {
-//     'status': 'IdleTimeout started',
-//     'timeout': timeoutSeconds,
-//   };
 
       default:
         return 'Plugin not supported.';
