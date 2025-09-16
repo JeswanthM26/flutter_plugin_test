@@ -1,0 +1,28 @@
+name: apz_device_info
+description: "A new plugin for device info."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mockito: ^5.4.2
+  build_runner: ^2.4.6
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.iexceed.apz_device_info
+        pluginClass: ApzDeviceInfo
+      ios:
+        pluginClass: ApzDeviceInfo

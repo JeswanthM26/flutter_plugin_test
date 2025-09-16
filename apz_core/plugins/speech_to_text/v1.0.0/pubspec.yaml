@@ -1,0 +1,25 @@
+name: apz_speech_to_text
+description: "Flutter plugin for speech to text"
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  apz_utils:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/utils/v1.0.0
+  flutter:
+    sdk: flutter
+  speech_to_text: 7.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.0
+  flutter_lints: ^5.0.0
+

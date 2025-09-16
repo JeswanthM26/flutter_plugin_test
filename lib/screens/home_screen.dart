@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:apz_utils/apz_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -169,7 +170,22 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Plugin Tester'),
         elevation: 0,
-      ),
+      ),floatingActionButton: kDebugMode
+          ? FloatingActionButton(
+              key: const ValueKey('home_button_dumpWidgetTree'),
+              onPressed: () {
+                debugDumpApp();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Widget tree dumped to console.'),
+                  ),
+                );
+              },
+              backgroundColor: Colors.amber,
+              child: const Icon(Icons.bug_report),
+              tooltip: 'Dump Widget Tree',
+            )
+          : null,
       body: plugins.isEmpty
           ? const Center(
               child: Column(
@@ -208,6 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     shadowColor: color.withOpacity(0.3),
                     child: InkWell(
                       onTap: () => openPluginForm(plugin),
+                      key: ValueKey('home_button_${plugin.name}'),
                       borderRadius: BorderRadius.circular(16),
                       child: Container(
                         decoration: BoxDecoration(

@@ -1,0 +1,45 @@
+name: apz_qr
+description: "A new Flutter plugin project."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  flutter_zxing: ^2.1.0
+  permission_handler: ^12.0.0+1
+  image: ^4.5.4
+  qr: ^2.1.0
+  apz_utils:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/utils/v1.0.0
+  apz_photopicker:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/photopicker/v1.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.4
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/test/
+plugin:
+  platforms:
+    android:
+      package: com.iexceed.apz_qr
+      pluginClass: ApzQR
+    ios:
+      pluginClass: ApzQR

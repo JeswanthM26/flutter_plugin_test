@@ -1,0 +1,27 @@
+name: apz_digi_scan
+description: "Plugin used to scan documents and return images or PDFs."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  apz_utils:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/utils/v1.0.0
+      
+  flutter:
+    sdk: flutter
+  flutter_doc_scanner: ^0.0.16
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.0
+
+

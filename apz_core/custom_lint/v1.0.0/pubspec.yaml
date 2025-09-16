@@ -1,0 +1,16 @@
+name: apz_custom_lint
+description: "A new Flutter package project."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  analyzer: ^7.0.0
+  analyzer_plugin: ^0.12.0
+  custom_lint_builder: ^0.7.1
+
+dev_dependencies:
+  flutter_lints: ^5.0.0

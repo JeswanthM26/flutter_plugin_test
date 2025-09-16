@@ -1,0 +1,17 @@
+name: apz_theme
+description: "A package for appzillon default theme & theme-manager."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  flutter_lints: ^5.0.0
+
+dev_dependencies:
