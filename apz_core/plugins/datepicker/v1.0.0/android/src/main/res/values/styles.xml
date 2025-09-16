@@ -1,0 +1,6 @@
+<resources>
+   <style name="TransparentDialogTheme" parent="Theme.Material3.DayNight.Dialog">
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:backgroundDimEnabled">true</item>
+</style>
+</resources>

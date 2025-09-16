@@ -1,0 +1,19 @@
+name: example
+description: "Example app for APZ Charts package"
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  apz_charts:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0

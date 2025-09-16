@@ -1,0 +1,26 @@
+name: apz_file_operations
+description: "A new Flutter plugin project."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  file_picker: ^10.2.0
+  permission_handler: ^12.0.0+1
+  apz_device_info:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/device_info/v1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.0
+     

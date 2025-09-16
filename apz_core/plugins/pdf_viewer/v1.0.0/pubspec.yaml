@@ -1,0 +1,28 @@
+name: apz_pdf_viewer
+description: "A new Flutter plugin project."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  pdfrx: ^1.2.8
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.4
+  mockito: ^5.4.0
+  build_runner: ^2.4.0
+
+
+flutter:
+  # If you want to keep it as a plugin but Dart-only, use this:
+  plugin:
+    platforms: {}
+
+ 
