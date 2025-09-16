@@ -1,0 +1,16 @@
+name: apz_localization
+description: "A new Flutter package project."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.8.0
+  flutter: ^3.32.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.1
+  flutter_lints: ^5.0.0
+
+dev_dependencies:

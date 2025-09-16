@@ -21,6 +21,16 @@
   "contact_picker": {
     "fields": []
   },
+   "custom_datepicker": {
+    "fields": [
+      {"key": "minDate", "label": "Minimum Date", "type": "date"},
+      {"key": "maxDate", "label": "Maximum Date", "type": "date"},
+      {"key": "initialDate", "label": "Initial Date", "type": "date"},
+      {"key": "calendarType", "label": "Calendar Type", "type": "dropdown", "options": ["single", "range"], "default": "single"},
+      {"key": "themeColor", "label": "Theme Color", "type": "color", "optional": true},
+      {"key": "dateFormat", "label": "Date Format", "type": "text", "default": "dd/MM/yyyy", "optional": true}
+    ]
+  },
   "date_picker": {
     "fields": [
       {"key": "minDate", "label": "Minimum Date", "type": "date"},
@@ -73,6 +83,17 @@
       { "key": "cropTitle", "label": "Crop Title", "type": "text", "default": "Crop Image" }
     ]
   },
+
+
+    "qr": {
+    "fields": [
+      {"key": "text", "label": "Text to encode", "type": "text", "default": "Hello from Appzillon"},
+      {"key": "height", "label": "Height", "type": "int", "default": 200},
+      {"key": "width", "label": "Width", "type": "int", "default": 200},
+      {"key": "margin", "label": "Margin", "type": "int", "default": 0}
+    ]
+  },
+
   "screenshot": {
     "fields": [
       { "key": "text", "label": "Text to Share", "type": "text" },

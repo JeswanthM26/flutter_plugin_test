@@ -21,6 +21,7 @@ import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:apz_camera/enum.dart';
 import 'package:apz_camera/image_model.dart';
 import 'package:apz_custom_datepicker/custom_date_picker_params.dart';
+import 'package:apz_custom_datepicker/apz_custom_datepicker.dart';
 import 'package:apz_custom_datepicker/selection_type.dart';
 import 'package:apz_photopicker/enum.dart';
 import 'package:flutter/foundation.dart';
@@ -31,7 +32,7 @@ import '../models/plugin_metadata.dart';
 import 'package:apz_camera/apz_camera.dart';
 import 'package:apz_contact/apz_contact.dart';
 import 'package:apz_contact_picker/apz_contact_picker.dart';
-import 'package:apz_custom_datepicker/apz_custom_datepicker.dart';
+//import 'package:apz_custom_datepicker/apz_custom_datepicker.dart';
 import 'package:apz_device_info/apz_device_info.dart';
 
 import 'package:apz_gps/apz_gps.dart';
@@ -225,8 +226,20 @@ case 'contact':
             'logs': logs,
           };
         }
+        
+//  case 'date_picker':
+//         final datePicker = ApzDatepicker();
+//         final params = DatePickerParams(
+//           initialDate: formData['initialDate'] ?? DateTime.now(),
+//           minDate: formData['minDate'] ?? DateTime(2020),
+//           maxDate: formData['maxDate'] ?? DateTime(2030),
+//           dateFormat: formData['dateFormat'] ?? 'dd/MM/yyyy',
+//           primaryColor: (formData['themeColor'] as Color?)?.value,
+//         );
+//         final result = await datePicker.showDatePicker(params: params);
+//         return {'selectedDate': result};
 
-      case 'date_picker':
+      case 'custom_datepicker':
         final datePicker = ApzCustomDatepicker();
         final params = CustomDatePickerParams(
           context: context,
@@ -986,6 +999,19 @@ case 'apz_idle_timeout':
               logs.add('Idle timeout callback triggered');
               // In a real app, you would implement a logout or other action here.
               // For this test app, we'll just log the event.
+                 showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Idle Timeout'),
+                  content: const Text('The app has been idle for a while.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
             },
             timeout: Duration(seconds: timeoutSeconds),
           );

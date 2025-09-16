@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:apz_utils/apz_utils.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/plugin_metadata.dart';
 import '../widgets/dynamic_form.dart';
@@ -172,6 +173,7 @@ void onGenerate() async {
         title: Text(widget.plugin.name.replaceAll('_', ' ').toUpperCase()),
         elevation: 0,
       ),
+      
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -253,6 +255,7 @@ void onGenerate() async {
                       ),
                     ),
                     IconButton(
+                      key: const ValueKey('pluginForm_iconButton_closeError'),
                       icon: const Icon(Icons.close),
                       onPressed: () => setState(() => _errorMessage = null),
                       color: Colors.red[600],
@@ -352,6 +355,7 @@ void onGenerate() async {
                     _isLoading ? 'Processing...' : 'Generate & Test',
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
+                  key: const ValueKey('pluginForm_button_generateAndTest'),
                   onPressed: _isLoading ? null : onGenerate,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _getPluginColor(widget.plugin.name),
