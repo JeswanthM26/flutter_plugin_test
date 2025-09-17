@@ -22,25 +22,17 @@ android {
 
     defaultConfig {
         applicationId = "com.example.plugin_tester"
-        minSdk = flutter.minSdkVersion
+        minSdk = 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     buildTypes {
-          release {
-            release {
-                signingConfig signingConfigs.release
-                minifyEnabled false
-                shrinkResources false
-                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            }
-            debug {
-                signingConfig = signingConfigs.debug
-            }
+        release {
+            signingConfig = signingConfigs.getByName("debug")
         }
-    } 
+    }
 }
 
 dependencies {
@@ -51,7 +43,3 @@ dependencies {
 flutter {
     source = "../.."
 }
-
-
-
-
