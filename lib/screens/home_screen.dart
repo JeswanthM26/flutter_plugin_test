@@ -100,6 +100,26 @@ class _HomeScreenState extends State<HomeScreen> {
         return Icons.web;
       case 'apz_idle_timeout':
         return Icons.timer;
+      case 'jailbreak_root_detection':
+        return Icons.security;
+      case 'apz_universal_linking':
+        return Icons.link;
+      case 'apz_crypto':
+        return Icons.vpn_key;
+      case 'apz_auto_read_otp':
+        return Icons.sms;
+      case 'apz_speech_to_text':
+        return Icons.mic;
+      case 'apz_text_to_speech':
+        return Icons.volume_up;
+      case 'apz_audioplayer':
+        return Icons.audiotrack;
+      case 'apz_charts':
+        return Icons.bar_chart;
+      case 'apz_app_shortcuts':
+        return Icons.app_shortcut;
+      case 'apz_call_state':
+        return Icons.call;
       default:
         return Icons.extension;
     }
@@ -159,6 +179,26 @@ class _HomeScreenState extends State<HomeScreen> {
         return Colors.blue;
       case 'apz_idle_timeout':
         return Colors.orange;
+        case 'jailbreak_root_detection':
+        return Colors.red;
+      case 'apz_universal_linking':
+        return Colors.blue;
+      case 'apz_crypto':
+        return Colors.teal;
+      case 'apz_auto_read_otp':
+        return Colors.lightBlue;
+      case 'apz_speech_to_text':
+        return Colors.red;
+      case 'apz_text_to_speech':
+        return Colors.blue;
+      case 'apz_audioplayer':
+        return Colors.orange;
+      case 'apz_charts':
+        return Colors.green;
+      case 'apz_app_shortcuts':
+        return Colors.deepPurpleAccent;
+      case 'apz_call_state':
+        return Colors.blueAccent;
       default:
         return Colors.grey;
     }

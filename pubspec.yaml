@@ -210,9 +210,59 @@ dependencies:
       url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
       ref: develop
       path: apz_core/plugins/webview/v1.0.0 
-
   
+  jailbreak_root_detection:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/jailbreak_root_detection/v1.0.0
+  apz_universal_linking:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/universal_linking/v1.0.0
+  apz_crypto:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/crypto/v1.0.0
+  apz_auto_read_otp:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/auto_read_otp/v1.0.0
+  apz_speech_to_text:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/speech_to_text/v1.0.0
+  apz_text_to_speech:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/text_to_speech/v1.0.0
+  apz_audioplayer:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/audio_player/v1.0.0
+  apz_charts:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/charts/v1.0.0
+  apz_app_shortcuts:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/app_shortcuts/v1.0.0
+  apz_call_state:
+    git:
+      url: http://prodgit.i-exceed.com:8009/appzillon-neu/core.git
+      ref: develop
+      path: apz_core/plugins/call_state/v1.0.0
 
+      
   cupertino_icons: ^1.0.8
   url_launcher: ^6.1.10
 
@@ -229,3 +279,5 @@ flutter:
     - assets/plugin_metadata.json
     - assets/JESWANTH.pdf
     - assets/pdf.pdf
+    - assets/rsa_public.pem
+    - assets/rsa_private.pem

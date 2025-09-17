@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:convert'; // Added for base64Encode
+import 'package:apz_app_shortcuts/shortcut_item.dart';
 import 'package:apz_gps/location_exception.dart';
 import 'package:apz_idle_timeout/apz_idle_timeout.dart';
 import 'package:apz_network_state_perm/network_state_model.dart';
@@ -55,6 +56,19 @@ import 'package:apz_screen_security/apz_screen_security.dart';
 import 'package:apz_share/apz_share.dart';
 import 'package:apz_webview/apz_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
+import 'package:apz_universal_linking/apz_universal_linking.dart';
+import 'package:apz_crypto/apz_crypto.dart';
+import 'package:apz_auto_read_otp/apz_auto_read_otp.dart';
+import 'package:apz_speech_to_text/apz_speech_to_text.dart';
+import 'package:apz_text_to_speech/apz_text_to_speech.dart';
+import 'package:apz_audioplayer/apz_audioplayer.dart';
+import 'package:apz_charts/apz_charts.dart';
+import 'package:apz_app_shortcuts/apz_app_shortcuts.dart';
+import 'package:apz_call_state/apz_call_state.dart';
+
+
+
 
 
 
@@ -506,84 +520,77 @@ case 'photopicker':
 case 'qr':
         final List<String> logs = [];
         try {
-          logs.add('QR Generator plugin started');
-          final generator = ApzQRGenerator();
-          final text = formData['text'] ?? '';
-          final height = formData['height'] ?? 200;
-          final width = formData['width'] ?? 200;
-          final margin = formData['margin'] ?? 0;
-          logs.add('Generating QR code with text: "$text", height: $height, width: $width, margin: $margin');
-          final bytes = await generator.generate(
-            text: text,
-            height: height,
-            width: width,
-            margin: margin,
-          );
-          logs.add('QR code generated successfully');
-          return {'qrBytes': bytes, 'logs': logs};
+          logs.add('QR plugin started');
+          final operation = formData['operation'];
+          logs.add('Operation: $operation');
+
+          switch (operation) {
+            case 'Generate QR Code':
+              final generator = ApzQRGenerator();
+              final text = formData['text'] ?? '';
+              final height = formData['height'] ?? 200;
+              final width = formData['width'] ?? 200;
+              final margin = formData['margin'] ?? 0;
+              logs.add('Generating QR code with text: "$text", height: $height, width: $width, margin: $margin');
+              final bytes = await generator.generate(
+                text: text,
+                height: height,
+                width: width,
+                margin: margin,
+              );
+              logs.add('QR code generated successfully');
+              return {'qrBytes': bytes, 'logs': logs};
+            case 'Scan QR Code':
+              final completer = Completer<Map<String, dynamic>>();
+              final scanner = ApzQrScanner(
+                callbacks: ApzQrScannerCallbacks(
+                  onScanSuccess: (code) {
+                    logs.add('Scan successful: ${code?.text}');
+                    if (!completer.isCompleted) {
+                      completer.complete({
+                        'result': code?.text,
+                        'logs': logs,
+                      });
+                    }
+                  },
+                  onScanFailure: (code) {
+                    logs.add('Scan failed: ${code?.error}');
+                    if (!completer.isCompleted) {
+                      completer.complete({
+                        'error': 'Failed to scan QR code.',
+                        'logs': logs,
+                      });
+                    }
+                  },
+                  onError: (error) {
+                    logs.add('Error: $error');
+                    if (!completer.isCompleted) {
+                      completer.complete({
+                        'error': 'An error occurred during scanning.',
+                        'logs': logs,
+                      });
+                    }
+                  },
+                ),
+              );
+              logs.add('QR Scanner configured');
+              return {
+                'widget': Scaffold(
+                  appBar: AppBar(title: const Text('QR Scanner')),
+                  body: scanner,
+                ),
+                'logs': logs,
+                'completer': completer,
+              };
+            default:
+              return {'error': 'Unknown QR operation', 'logs': logs};
+          }
         } catch (e, st) {
           logs.add('Exception occurred: $e');
           logs.add('Stacktrace: $st');
-          logger.error('[QRGenerator] Exception: $e', e, st);
+          logger.error('[QR] Exception: $e', e, st);
           return {
-            'error': 'Failed to generate QR code. Please try again.',
-            'logs': logs,
-          };
-        }
-
-case 'qr_scanner':
-        final List<String> logs = [];
-        try {
-          logs.add('QR Scanner plugin started');
-          final completer = Completer<Map<String, dynamic>>();
-          final scanner = ApzQrScanner(
-            callbacks: ApzQrScannerCallbacks(
-              onScanSuccess: (code) {
-                logs.add('Scan successful: ${code?.text}');
-                if(!completer.isCompleted) {
-                  completer.complete({
-                    'result': code?.text,
-                    'logs': logs,
-                  });
-                }
-              },
-              onScanFailure: (code) {
-                logs.add('Scan failed: ${code?.error}');
-                 if(!completer.isCompleted) {
-                  completer.complete({
-                    'error': 'Failed to scan QR code.',
-                    'logs': logs,
-                  });
-                }
-              },
-              onError: (error) {
-                logs.add('Error: $error');
-                if(!completer.isCompleted) {
-                  completer.complete({
-                    'error': 'An error occurred during scanning.',
-                    'logs': logs,
-                  });
-                }
-              },
-            ),
-          );
-
-          logs.add('QR Scanner configured');
-
-          return {
-            'widget': Scaffold(
-              appBar: AppBar(title: const Text('QR Scanner')),
-              body: scanner,
-            ),
-            'logs': logs,
-            'completer': completer,
-          };
-        } catch (e, st) {
-          logs.add('Exception occurred: $e');
-          logs.add('Stacktrace: $st');
-          logger.error('[QRScanner] Exception: $e', e, st);
-          return {
-            'error': 'Failed to open QR Scanner. Please try again.',
+            'error': 'Failed to perform QR operation. Please try again.',
             'logs': logs,
           };
         }
@@ -1117,9 +1124,603 @@ case 'apz_webview':
   } catch (e) {
     return {'error': e.toString()};
   }
+  case 'jailbreak_root_detection':
+        final List<String> logs = [];
+        try {
+          logs.add('Jailbreak Root Detection plugin started');
+          final jailbreakDetector = JailbreakRootDetection.instance;
+          logs.add('JailbreakRootDetection instance obtained');
+
+          final isJailBroken = await jailbreakDetector.isJailBroken;
+          logs.add('isJailBroken check completed: $isJailBroken');
+
+          final issues = await jailbreakDetector.checkForIssues;
+          logs.add(
+              'checkForIssues completed: ${issues.map((e) => e.name).join(', ')}');
+
+          final isNotTrusted = await jailbreakDetector.isNotTrust;
+          logs.add('isNotTrust check completed: $isNotTrusted');
+
+          return {
+            'isJailBroken': isJailBroken,
+            'issues': issues.map((e) => e.name).toList(),
+            'isNotTrusted': isNotTrusted,
+            'logs': logs,
+          };
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[JailbreakDetection] Exception: $e', e, st);
+          return {
+            'error':
+                'Failed to perform jailbreak/root detection. Please try again.',
+            'logs': logs,
+          };
+        }
+ case 'apz_universal_linking':
+        final List<String> logs = [];
+        try {
+          logs.add('Universal Linking plugin started');
+          final universalLink = ApzUniversalLinking();
+          logs.add('ApzUniversalLinking instance created');
+
+          final controller = StreamController<Map<String, dynamic>>();
+
+          // Get the initial link
+          universalLink.getInitialLink().then((link) {
+            if (link != null) {
+              logs.add('Initial link received: ${link.fullUrl}');
+              controller.add({
+                'link': link.fullUrl,
+                'queryParams': link.queryParams,
+                'logs': List.from(logs),
+              });
+            }
+          });
+
+          // Listen for incoming links
+          universalLink.linkStream.listen((link) {
+            logs.add('Link received: ${link.fullUrl}');
+            controller.add({
+              'link': link.fullUrl,
+              'queryParams': link.queryParams,
+              'logs': List.from(logs),
+            });
+          }, onError: (error) {
+            logs.add('Error in link stream: $error');
+            controller.add({
+              'error': 'Error in link stream: $error',
+              'logs': List.from(logs),
+            });
+          });
+
+          return {'stream': controller.stream};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[UniversalLinking] Exception: $e', e, st);
+          return {
+            'error':
+                'Failed to initialize universal linking. Please try again.',
+            'logs': logs,
+          };
+        }
+         case 'apz_crypto':
+        final List<String> logs = [];
+        try {
+          logs.add('Crypto plugin started');
+          final crypto = ApzCrypto();
+          logs.add('ApzCrypto instance created');
+          final operation = formData['operation'];
+          logs.add('Operation: $operation');
+
+          switch (operation) {
+            case 'Symmetric Encrypt':
+              final result = crypto.symmetricEncrypt(
+                textToEncrypt: formData['textToEncrypt'],
+                key: formData['key_sym_enc'],
+                iv: formData['iv_sym_enc'],
+              );
+              return {'result': result, 'logs': logs};
+            case 'Symmetric Decrypt':
+              final result = crypto.symmetricDecrypt(
+                cipherText: formData['cipherText'],
+                key: formData['key_sym_dec'],
+                iv: formData['iv_sym_dec'],
+              );
+              return {'result': result, 'logs': logs};
+            case 'Asymmetric Encrypt':
+              final result = await crypto.asymmetricEncrypt(
+                publicKeyPath: formData['publicKeyPath'],
+                textToEncrypt: formData['textToEncrypt_asym'],
+              );
+              return {'result': result, 'logs': logs};
+            case 'Asymmetric Decrypt':
+              final result = await crypto.asymmetricDecrypt(
+                privateKeyPath: formData['privateKeyPath_asym_dec'],
+                encryptedData: formData['encryptedData'],
+              );
+              return {'result': result, 'logs': logs};
+            case 'Generate Signature':
+              final result = await crypto.generateSignature(
+                privateKeyPath: formData['privateKeyPath_sig'],
+                textToSign: formData['textToSign'],
+              );
+              return {'result': result, 'logs': logs};
+            case 'Verify Signature':
+              final result = await crypto.verifySignature(
+                publicKeyPath: formData['publicKeyPath_ver'],
+                originalText: formData['originalText'],
+                signature: formData['signature'],
+              );
+              return {'result': result, 'logs': logs};
+            case 'Generate Hash':
+              final result = crypto.generateHashDigest(
+                textToHash: formData['textToHash'],
+                type: formData['hashType'] == 'SHA-384'
+                    ? HashType.sha384
+                    : formData['hashType'] == 'SHA-512'
+                        ? HashType.sha512
+                        : HashType.sha256,
+              );
+              return {'result': result, 'logs': logs};
+            case 'Generate Hash with Salt':
+              final result = crypto.generateHashDigestWithSalt(
+                textToHash: formData['textToHash_salt'],
+                salt: formData['salt'],
+                type: formData['hashType_salt'] == 'SHA-384'
+                    ? HashType.sha384
+                    : formData['hashType_salt'] == 'SHA-512'
+                        ? HashType.sha512
+                        : HashType.sha256,
+                iterationCount: formData['iterationCount'],
+                outputKeyLength: formData['outputKeyLength'],
+              );
+              return {'result': result, 'logs': logs};
+            case 'Generate Random Bytes':
+              final result = crypto.generateRandomBytes(
+                length: formData['length_bytes'],
+              );
+              return {'result': base64Encode(result), 'logs': logs};
+            case 'Generate Random Alphanumeric':
+              final result = crypto.generateRandomAlphanumeric(
+                length: formData['length_alphanum'],
+              );
+              return {'result': result, 'logs': logs};
+            default:
+              return {'error': 'Unknown crypto operation', 'logs': logs};
+          }
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[Crypto] Exception: $e', e, st);
+          return {
+            'error': 'Failed to perform crypto operation. Please try again.',
+            'logs': logs,
+          };
+        }
+case 'apz_auto_read_otp':
+        final List<String> logs = [];
+        try {
+          logs.add('Auto Read OTP plugin started');
+          final autoReadOtp = APZAutoReadOtp();
+          logs.add('APZAutoReadOtp instance created');
+          final listenerType = formData['listenerType'] == 'retriever'
+              ? ListenerType.retriever
+              : ListenerType.consent;
+          final senderNumber = formData['senderNumber'];
+          logs.add('Listener Type: $listenerType');
+          if (senderNumber != null) {
+            logs.add('Sender Number: $senderNumber');
+          }
+
+          final controller = StreamController<Map<String, dynamic>>();
+
+          autoReadOtp.onSms = (String sms) {
+            logs.add('SMS received: $sms');
+            controller.add({
+              'sms': sms,
+              'logs': List.from(logs),
+            });
+            autoReadOtp.stopOtpListener();
+            controller.close();
+          };
+
+          autoReadOtp.startOTPListener(
+            type: listenerType,
+            senderNumber: senderNumber,
+          );
+
+          return {'stream': controller.stream};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[AutoReadOtp] Exception: $e', e, st);
+          return {
+            'error': 'Failed to start OTP listener. Please try again.',
+            'logs': logs,
+          };
+        }
+      case 'apz_speech_to_text':
+        final List<String> logs = [];
+        try {
+          logs.add('Speech to Text plugin started');
+          final speechToText = ApzSpeechToText();
+          logs.add('ApzSpeechToText instance created');
+          final language = formData['language'];
+          final listenDuration = formData['listenDuration'];
+          logs.add('Language: $language, Duration: $listenDuration');
+
+          final controller = StreamController<Map<String, dynamic>>();
+
+          speechToText.initialize(
+            callback: ({String? text, String? error, bool? isListening}) {
+              logs.add('isListening: $isListening, text: $text, error: $error');
+              controller.add({
+                'isListening': isListening,
+                'text': text,
+                'error': error,
+                'logs': List.from(logs),
+              });
+              if (isListening == false) {
+                controller.close();
+              }
+            },
+          );
+
+          await speechToText.startListening(
+            language: language,
+            listenDuration: listenDuration,
+          );
+
+          return {'stream': controller.stream};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[SpeechToText] Exception: $e', e, st);
+          return {
+            'error': 'Failed to start speech listener. Please try again.',
+            'logs': logs,
+          };
+        }
+      case 'apz_text_to_speech':
+        final List<String> logs = [];
+        try {
+          logs.add('Text to Speech plugin started');
+          final textToSpeech = ApzTextToSpeech();
+          logs.add('ApzTextToSpeech instance created');
+          final text = formData['text'];
+          final voiceName = formData['voiceName'];
+          final locale = formData['locale'];
+          final rate = formData['rate'];
+          final pitch = formData['pitch'];
+          final volume = formData['volume'];
+
+          if (voiceName != null && locale != null) {
+            await textToSpeech.setVoice(voiceName, locale);
+            logs.add('Voice set to: $voiceName ($locale)');
+          }
+          if (rate != null) {
+            await textToSpeech.setSpeechRate(rate);
+            logs.add('Rate set to: $rate');
+          }
+          if (pitch != null) {
+            await textToSpeech.setPitch(pitch);
+            logs.add('Pitch set to: $pitch');
+          }
+          if (volume != null) {
+            await textToSpeech.setVolume(volume);
+            logs.add('Volume set to: $volume');
+          }
+
+          final result = await textToSpeech.speak(text);
+          logs.add('Speak method called. Result: $result');
+          return {'result': 'Speak method called. Result: $result', 'logs': logs};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[TextToSpeech] Exception: $e', e, st);
+          return {
+            'error': 'Failed to perform text to speech. Please try again.',
+            'logs': logs,
+          };
+
+        }
+
+        case 'apz_audioplayer':
+        final List<String> logs = [];
+        try {
+          logs.add('Audio Player plugin started');
+          final audioPlayer = ApzAudioplayer();
+          logs.add('ApzAudioplayer instance created');
+          final sourceType = formData['sourceType'];
+          final audioPath = formData['audioPath'];
+          final isLoop = formData['isLoop'];
+          final stopAfterSeconds = formData['stopAfterSeconds'];
+          logs.add('Source Type: $sourceType, Path: $audioPath, Loop: $isLoop, Stop After: $stopAfterSeconds');
+
+          switch (sourceType) {
+            case 'url':
+              await audioPlayer.playUrlAudio(
+                audioUrl: audioPath,
+                isLoop: isLoop,
+                stopAfterSeconds: stopAfterSeconds,
+              );
+              break;
+            case 'asset':
+              await audioPlayer.playAssetAudio(
+                audioUrl: audioPath,
+                isLoop: isLoop,
+                stopAfterSeconds: stopAfterSeconds,
+              );
+              break;
+            case 'file':
+              await audioPlayer.playFileAudio(
+                filePath: audioPath,
+                isLoop: isLoop,
+                stopAfterSeconds: stopAfterSeconds,
+              );
+              break;
+          }
+          return {'result': 'Audio playback started.', 'logs': logs};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[AudioPlayer] Exception: $e', e, st);
+          return {
+            'error': 'Failed to play audio. Please try again.',
+            'logs': logs,
+          };
+        }
+//  case 'apz_charts':
+//         final List<String> logs = [];
+//         try {
+//           logs.add('Charts plugin started');
+//           final chartType = ChartType.values.firstWhere(
+//               (e) => e.toString() == 'ChartType.${formData['chartType']}');
+//           logs.add('Chart Type: $chartType');
+
+//           final chartDataJson = jsonDecode(formData['chartData']);
+//           final chartConfigJson = formData['chartConfig'] != null && formData['chartConfig'].toString().isNotEmpty
+//               ? jsonDecode(formData['chartConfig'])
+//               : null;
+
+//           // Manual JSON parsing to create chart data objects
+//           final labels = List<String>.from(chartDataJson['labels'] ?? []);
+//           final datasets = (chartDataJson['datasets'] as List<dynamic>? ?? [])
+//               .map((datasetJson) {
+//                 // Assuming APZDataSet is the type for the dataset objects in the plugin
+//                 // and it has a constructor that takes label and data.
+//                 return APZDataSet(
+//                   label: datasetJson['label'] as String? ?? '',
+//                   data: List<num>.from(datasetJson['data'] ?? []),
+//                 );
+//               }).toList();
+
+//           BaseChartData chartData;
+//           BaseChartConfig chartConfig;
+
+//           switch (chartType) {
+//             case ChartType.line:
+//               chartData = APZLineData(labels: labels, datasets: datasets);
+//               chartConfig = chartConfigJson != null
+//                   ? LineChartConfig.fromJson(chartConfigJson)
+//                   : LineChartConfig();
+//               break;
+//             case ChartType.bar:
+//               chartData = APZBarData(labels: labels, datasets: datasets);
+//               chartConfig = chartConfigJson != null
+//                   ? BarChartConfig.fromJson(chartConfigJson)
+//                   : BarChartConfig();
+//               break;
+//             case ChartType.pie:
+//               chartData = APZPieData(labels: labels, datasets: datasets);
+//               chartConfig = chartConfigJson != null
+//                   ? PieChartConfig.fromJson(chartConfigJson)
+//                   : PieChartConfig();
+//               break;
+//             case ChartType.radar:
+//               chartData = APZRadarData(labels: labels, datasets: datasets);
+//               chartConfig = chartConfigJson != null
+//                   ? RadarChartConfig.fromJson(chartConfigJson)
+//                   : RadarChartConfig();
+//               break;
+//             case ChartType.scatter:
+//               chartData = APZScatterData(labels: labels, datasets: datasets);
+//               chartConfig = chartConfigJson != null
+//                   ? ScatterChartConfig.fromJson(chartConfigJson)
+//                   : ScatterChartConfig();
+//               break;
+//           }
+
+//           return {
+//             'widget': APZChart(
+//               type: chartType,
+//               data: chartData,
+//               config: chartConfig,
+//             ),
+//             'logs': logs,
+//           };
+//         } catch (e, st) {
+//           logs.add('Exception occurred: $e');
+//           logs.add('Stacktrace: $st');
+//           logger.error('[Charts] Exception: $e', e, st);
+//           return {
+//             'error': 'Failed to create chart. Please check your JSON data and config. Error: $e',
+//             'logs': logs,
+//           };
+//         }
+//       case 'apz_app_shortcuts':
+//         final List<String> logs = [];
+//         try {
+//           logs.add('App Shortcuts plugin started');
+//           final appShortcuts = ApzAppShortcuts();
+//           logs.add('ApzAppShortcuts instance created');
+//           final shortcutsJson = jsonDecode(formData['shortcuts']);
+//           final shortcuts = (shortcutsJson as List)
+//               .map((item) => ShortcutItem(
+//                     id: item['id'],
+//                     title: item['title'],
+//                     icon: item['icon'],
+//                   ))
+//               .toList();
+//           await appShortcuts.setShortcutItems(shortcuts);
+//           logs.add('Shortcuts set');
+
+//           final controller = StreamController<Map<String, dynamic>>();
+//           appShortcuts.registerShortcutCallback((id) {
+//             logs.add('Shortcut tapped: $id');
+//             controller.add({
+//               'shortcutId': id,
+//               'logs': List.from(logs),
+//             });
+//           });
+
+//           return {'stream': controller.stream};
+//         } catch (e, st) {
+//           logs.add('Exception occurred: $e');
+//           logs.add('Stacktrace: $st');
+//           logger.error('[AppShortcuts] Exception: $e', e, st);
+//           return {
+//             'error': 'Failed to set app shortcuts. Please try again.',
+//             'logs': logs,
+//           };
+//         }
+
+      // case 'apz_charts':
+      //   final List<String> logs = [];
+      //   try {
+      //     logs.add('Charts plugin started');
+      //     final chartType = ChartType.values.firstWhere(
+      //         (e) => e.toString() == 'ChartType.${formData['chartType']}');
+      //     logs.add('Chart Type: $chartType');
+      //     final chartDataJson = jsonDecode(formData['chartData']);
+      //     final chartConfigJson = formData['chartConfig'] != null
+      //         ? jsonDecode(formData['chartConfig'])
+      //         : null;
+
+      //     BaseChartData chartData;
+      //     BaseChartConfig chartConfig;
+
+      //     switch (chartType) {
+      //       case ChartType.line:
+      //         chartData = APZLineData.fromJson(chartDataJson);
+      //         chartConfig = chartConfigJson != null
+      //             ? LineChartConfig.fromJson(chartConfigJson)
+      //             : LineChartConfig();
+      //         break;
+      //       case ChartType.bar:
+      //         chartData = APZBarData.fromJson(chartDataJson);
+      //         chartConfig = chartConfigJson != null
+      //             ? BarChartConfig.fromJson(chartConfigJson)
+      //             : BarChartConfig();
+      //         break;
+      //       case ChartType.pie:
+      //         chartData = APZPieData.fromJson(chartDataJson);
+      //         chartConfig = chartConfigJson != null
+      //             ? PieChartConfig.fromJson(chartConfigJson)
+      //             : PieChartConfig();
+      //         break;
+      //       case ChartType.radar:
+      //         chartData = APZRadarData.fromJson(chartDataJson);
+      //         chartConfig = chartConfigJson != null
+      //             ? RadarChartConfig.fromJson(chartConfigJson)
+      //             : RadarChartConfig();
+      //         break;
+      //       case ChartType.scatter:
+      //         chartData = APZScatterData.fromJson(chartDataJson);
+      //         chartConfig = chartConfigJson != null
+      //             ? ScatterChartConfig.fromJson(chartConfigJson)
+      //             : ScatterChartConfig();
+      //         break;
+      //     }
+
+      //     return {
+      //       'widget': APZChart(
+      //         type: chartType,
+      //         data: chartData,
+      //         config: chartConfig,
+      //       ),
+      //       'logs': logs,
+      //     };
+      //   } catch (e, st) {
+      //     logs.add('Exception occurred: $e');
+      //     logs.add('Stacktrace: $st');
+      //     logger.error('[Charts] Exception: $e', e, st);
+      //     return {
+      //       'error': 'Failed to create chart. Please check your JSON data and config.',
+      //       'logs': logs,
+      //     };
+      //   }
+case 'apz_app_shortcuts':
+        final List<String> logs = [];
+        try {
+          logs.add('App Shortcuts plugin started');
+          final appShortcuts = ApzAppShortcuts();
+          logs.add('ApzAppShortcuts instance created');
+          final shortcutsJson = jsonDecode(formData['shortcuts']);
+          final shortcuts = (shortcutsJson as List)
+              .map((item) => ShortcutItem(
+                    id: item['id'],
+                    title: item['title'],
+                    icon: item['icon'],
+                  ))
+              .toList();
+          await appShortcuts.setShortcutItems(shortcuts);
+          logs.add('Shortcuts set');
+
+          final controller = StreamController<Map<String, dynamic>>();
+          appShortcuts.registerShortcutCallback((id) {
+            logs.add('Shortcut tapped: $id');
+            controller.add({
+              'shortcutId': id,
+              'logs': List.from(logs),
+            });
+          });
+
+          return {'stream': controller.stream};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[AppShortcuts] Exception: $e', e, st);
+          return {
+            'error': 'Failed to set app shortcuts. Please try again.',
+            'logs': logs,
+          };
+        }
+      case 'apz_call_state':
+        final List<String> logs = [];
+        try {
+          logs.add('Call State plugin started');
+          final callState = ApzCallState();
+          logs.add('ApzCallState instance created');
+
+          final controller = StreamController<Map<String, dynamic>>();
+
+          callState.callStateStream.then((stream) {
+            stream.listen((state) {
+              logs.add('Call state changed: $state');
+              controller.add({
+                'callState': state.toString(),
+                'logs': List.from(logs),
+              });
+            });
+          });
+
+          return {'stream': controller.stream};
+        } catch (e, st) {
+          logs.add('Exception occurred: $e');
+          logs.add('Stacktrace: $st');
+          logger.error('[CallState] Exception: $e', e, st);
+          return {
+            'error': 'Failed to start call state listener. Please try again.',
+            'logs': logs,
+          };
+        }
+
 
       default:
         return 'Plugin not supported.';
     }
-  }
+  }     
 }

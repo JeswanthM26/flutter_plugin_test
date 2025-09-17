@@ -84,15 +84,61 @@
     ]
   },
 
-
-    "qr": {
+  "qr": {
     "fields": [
-      {"key": "text", "label": "Text to encode", "type": "text", "default": "Hello from Appzillon"},
-      {"key": "height", "label": "Height", "type": "int", "default": 200},
-      {"key": "width", "label": "Width", "type": "int", "default": 200},
-      {"key": "margin", "label": "Margin", "type": "int", "default": 0}
-    ]
-  },
+        {
+            "key": "operation",
+            "label": "Select Operation",
+            "type": "dropdown",
+            "options": [
+                "Generate QR Code",
+                "Scan QR Code"
+            ],
+            "default": "Generate QR Code"
+        },
+        {
+            "key": "text",
+            "label": "Text to encode",
+            "type": "text",
+            "default": "Hello from Appzillon",
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate QR Code"
+            }
+        },
+        {
+            "key": "height",
+            "label": "Height",
+            "type": "int",
+            "default": 200,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate QR Code"
+            }
+        },
+        {
+            "key": "width",
+            "label": "Width",
+            "type": "int",
+            "default": 200,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate QR Code"
+            }
+        },
+        {
+            "key": "margin",
+            "label": "Margin",
+            "type": "int",
+            "default": 0,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate QR Code"
+            }
+        }
+    ] 
+},
+
 
   "screenshot": {
     "fields": [
@@ -129,9 +175,7 @@
     }
   ]
 },
-"qr_scanner": {
-    "fields": []
-  },
+
 "device_fingerprint": {
   "fields": []
 },
@@ -333,9 +377,441 @@
       "default": false
     }
   ]
-}
+},
+"jailbreak_root_detection": {
+    "fields": []
+},
 
-}
+"apz_universal_linking": {
+    "fields": []
+  },
+
+"apz_auto_read_otp": {
+    "fields": [
+        {
+            "key": "listenerType",
+            "label": "Listener Type",
+            "type": "dropdown",
+            "options": [
+                "consent",
+                "retriever"
+            ],
+            "default": "consent"
+        },
+        {
+            "key": "senderNumber",
+            "label": "Sender Phone Number (for consent mode)",
+            "type": "text",
+            "optional": true,
+            "dependsOn": {
+                "key": "listenerType",
+                "value": "consent"
+      }
+    }
+            ]
+          },
+          "apz_speech_to_text": {
+    "fields": [
+        {
+            "key": "language",
+            "label": "Language Code",
+            "type": "text",
+            "default": "en_US"
+        },
+        {
+            "key": "listenDuration",
+            "label": "Listen Duration (seconds)",
+            "type": "int",
+            "default": 30
+        }
+    ]
+},
+"apz_text_to_speech": {
+    "fields": [
+        {
+            "key": "text",
+            "label": "Text to Speak",
+            "type": "text",
+            "required": true
+        },
+        {
+            "key": "voiceName",
+            "label": "Voice Name (optional)",
+            "type": "text",
+            "optional": true
+        },
+        {
+            "key": "locale",
+            "label": "Locale (optional)",
+            "type": "text",
+            "optional": true
+        },
+        {
+            "key": "rate",
+            "label": "Speech Rate (0.1 - 2.0)",
+            "type": "double",
+            "default": 1.0,
+            "optional": true
+        },
+        {
+            "key": "pitch",
+            "label": "Pitch (0.5 - 2.0)",
+            "type": "double",
+            "default": 1.0,
+            "optional": true
+        },
+        {
+            "key": "volume",
+            "label": "Volume (0.0 - 1.0)",
+            "type": "double",
+            "default": 1.0,
+            "optional": true
+        }
+      
+    ]
+  },
+  "apz_audioplayer": {
+    "fields": [
+        {
+            "key": "sourceType",
+            "label": "Audio Source Type",
+            "type": "dropdown",
+            "options": [
+                "url",
+                "asset",
+                "file"
+            ],
+            "default": "url"
+        },
+        {
+            "key": "audioPath",
+            "label": "Audio Path/URL",
+            "type": "text",
+            "required": true
+        },
+        {
+            "key": "isLoop",
+            "label": "Loop Audio",
+            "type": "bool",
+            "default": false
+        },
+        {
+            "key": "stopAfterSeconds",
+            "label": "Stop After (seconds, optional)",
+            "type": "int",
+            "optional": true
+        }
+    ]
+},
+"apz_charts": {
+    "fields": [
+        {
+            "key": "chartType",
+            "label": "Chart Type",
+            "type": "dropdown",
+            "options": [
+                "line",
+                "bar",
+                "pie",
+                "radar",
+                "scatter"
+            ],
+            "default": "line"
+        },
+        {
+            "key": "chartData",
+            "label": "Chart Data (JSON)",
+            "type": "text",
+            "required": true
+        },
+        {
+            "key": "chartConfig",
+            "label": "Chart Config (JSON, optional)",
+            "type": "text",
+            "optional": true
+        }
+    ]
+},
+"apz_app_shortcuts": {
+    "fields": [
+        {
+            "key": "shortcuts",
+            "label": "Shortcuts (JSON)",
+            "type": "text",
+            "required": true,
+            "default": "[{\"id\":\"1\",\"title\":\"Home\",\"icon\":\"home\"},{\"id\":\"2\",\"title\":\"Search\",\"icon\":\"search\"}]"
+        }
+    ]
+},
+"apz_call_state": {
+    "fields": []
+},
+
+  "apz_crypto": {
+    "fields": [
+        {
+            "key": "operation",
+            "label": "Select Operation",
+            "type": "dropdown",
+            "options": [
+                "Symmetric Encrypt",
+                "Symmetric Decrypt",
+                "Asymmetric Encrypt",
+                "Asymmetric Decrypt",
+                "Generate Signature",
+                "Verify Signature",
+                "Generate Hash",
+                "Generate Hash with Salt",
+                "Generate Random Bytes",
+                "Generate Random Alphanumeric"
+            ],
+            "default": "Symmetric Encrypt"
+        },
+        {
+            "key": "textToEncrypt",
+            "label": "Text to Encrypt",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Symmetric Encrypt"
+            }
+        },
+        {
+            "key": "key_sym_enc",
+            "label": "Key (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Symmetric Encrypt"
+            }
+        },
+        {
+            "key": "iv_sym_enc",
+            "label": "IV (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Symmetric Encrypt"
+            }
+        },
+        {
+            "key": "cipherText",
+            "label": "Cipher Text (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Symmetric Decrypt"
+            }
+        },
+        {
+            "key": "key_sym_dec",
+            "label": "Key (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Symmetric Decrypt"
+            }
+        },
+        {
+            "key": "iv_sym_dec",
+            "label": "IV (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Symmetric Decrypt"
+            }
+        },
+        {
+            "key": "publicKeyPath",
+            "label": "Public Key Path",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Asymmetric Encrypt"
+            }
+        },
+        {
+            "key": "textToEncrypt_asym",
+            "label": "Text to Encrypt",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Asymmetric Encrypt"
+            }
+        },
+        {
+            "key": "privateKeyPath_asym_dec",
+            "label": "Private Key Path",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Asymmetric Decrypt"
+            }
+        },
+        {
+            "key": "encryptedData",
+            "label": "Encrypted Data (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Asymmetric Decrypt"
+            }
+        },
+        {
+            "key": "privateKeyPath_sig",
+            "label": "Private Key Path",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Signature"
+            }
+        },
+        {
+            "key": "textToSign",
+            "label": "Text to Sign",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Signature"
+            }
+        },
+        {
+            "key": "publicKeyPath_ver",
+            "label": "Public Key Path",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Verify Signature"
+            }
+        },
+        {
+            "key": "originalText",
+            "label": "Original Text",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Verify Signature"
+            }
+        },
+        {
+            "key": "signature",
+            "label": "Signature (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Verify Signature"
+            }
+        },
+        {
+            "key": "textToHash",
+            "label": "Text to Hash",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Hash"
+            }
+        },
+        {
+            "key": "hashType",
+            "label": "Hash Type",
+            "type": "dropdown",
+            "options": ["SHA-256", "SHA-384", "SHA-512"],
+            "default": "SHA-256",
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Hash"
+            }
+        },
+        {
+            "key": "textToHash_salt",
+            "label": "Text to Hash",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Hash with Salt"
+            }
+        },
+        {
+            "key": "salt",
+            "label": "Salt (Base64)",
+            "type": "text",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Hash with Salt"
+            }
+        },
+        {
+            "key": "hashType_salt",
+            "label": "Hash Type",
+            "type": "dropdown",
+            "options": ["SHA-256", "SHA-384", "SHA-512"],
+            "default": "SHA-256",
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Hash with Salt"
+            }
+        },
+        {
+            "key": "iterationCount",
+            "label": "Iteration Count",
+            "type": "int",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Hash with Salt"
+            }
+        },
+        {
+            "key": "outputKeyLength",
+            "label": "Output Key Length (bytes)",
+            "type": "int",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Hash with Salt"
+            }
+        },
+        {
+            "key": "length_bytes",
+            "label": "Length (bytes)",
+            "type": "int",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Random Bytes"
+            }
+        },
+        {
+            "key": "length_alphanum",
+            "label": "Length",
+            "type": "int",
+            "required": true,
+            "dependsOn": {
+                "key": "operation",
+                "value": "Generate Random Alphanumeric"
+            }
+        }
+    ]
+
+}}
 
 
 
