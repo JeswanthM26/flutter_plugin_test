@@ -19,8 +19,6 @@ import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 
 
-import 'package:apz_camera/enum.dart';
-import 'package:apz_camera/image_model.dart';
 import 'package:apz_custom_datepicker/custom_date_picker_params.dart';
 import 'package:apz_custom_datepicker/apz_custom_datepicker.dart';
 import 'package:apz_custom_datepicker/selection_type.dart';
@@ -31,6 +29,8 @@ import '../models/plugin_metadata.dart';
 
 
 import 'package:apz_camera/apz_camera.dart';
+import 'package:apz_camera/models/camera_capture_params.dart';
+
 import 'package:apz_contact/apz_contact.dart';
 import 'package:apz_contact_picker/apz_contact_picker.dart';
 //import 'package:apz_custom_datepicker/apz_custom_datepicker.dart';
@@ -68,10 +68,6 @@ import 'package:apz_app_shortcuts/apz_app_shortcuts.dart';
 import 'package:apz_call_state/apz_call_state.dart';
 
 
-
-
-
-
 class PluginLauncher {
   static Future<dynamic> launch(
     PluginMetadata plugin,
@@ -81,42 +77,98 @@ class PluginLauncher {
    // dynamic navigatorKey,
   ) async {
     switch (plugin.name) {
-      case 'camera':
+     
+      // case 'camera':
+      //   final List<String> logs = [];
+      //   try {
+      //     logs.add('Camera plugin started');
+      //     final params = CameraCaptureParams(
+      //       crop: formData['crop'] ?? true,
+      //       quality: formData['quality'] ?? 100,
+      //       fileName: formData['fileName'] ?? 'my_image',
+      //       format: (formData['format'] == 'png') ? ImageFormat.png : ImageFormat.jpeg,
+      //       targetWidth: formData['targetWidth'],
+      //       targetHeight: formData['targetHeight'],
+      //       cameraDeviceSensor: (formData['cameraDeviceSensor'] == 'front')
+      //           ? CameraDeviceSensor.front
+      //           : CameraDeviceSensor.back,
+      //       cropTitle: formData['cropTitle'] ?? 'Crop Image',
+      //       previewTitle: formData['previewTitle'] ?? 'Preview',
+      //     );
+      //     logs.add('CameraCaptureParams created: '
+      //         'crop=${params.crop}, quality=${params.quality}, fileName=${params.fileName}, format=${params.format}, targetWidth=${params.targetWidth}, targetHeight=${params.targetHeight}, cameraDeviceSensor=${params.cameraDeviceSensor}, cropTitle=${params.cropTitle}, previewTitle=${params.previewTitle}');
+      //     final camera = ApzCamera();
+      //     logs.add('ApzCamera instance created');
+      //     final result = await camera.openCamera(
+      //       context: context,
+      //       params: params,
+      //     );
+      //     if (result == null) {
+      //       logs.add('No image captured (result is null)');
+      //       return {'error': 'No image was captured.', 'logs': logs};
+      //     }
+      //     logs.add('Image captured successfully');
+      //     logs.add('Image path: \'${result.imageFile?.path}\'');
+      //     logs.add('Base64 size (KB): ${result.base64ImageSizeInKB}');
+      //     return {
+      //       'imageFile': result.imageFile,
+      //       'imagePath': result.imageFile?.path,
+      //       'base64': result.base64String,
+      //       'base64SizeKB': result.base64ImageSizeInKB,
+      //       'logs': logs,
+      //     };
+      //   } catch (e, st) {
+      //     logs.add('Exception occurred: $e');
+      //     logs.add('Stacktrace: $st');
+      //     logger.error('[Camera] Exception: $e', e, st);
+      //     return {
+      //       'error': 'Failed to capture image. Please check camera permissions and try again.',
+      //       'logs': logs,
+      //     };
+      //   }
+
+     case 'camera':
         final List<String> logs = [];
         try {
           logs.add('Camera plugin started');
-          final imageModel = ImageModel(
+          final params = CameraCaptureParams(
             crop: formData['crop'] ?? true,
-            quality: formData['quality'] ?? 80,
-            fileName: formData['fileName'] ?? 'my_image',
+            quality: formData['quality'] ?? 100,
+            fileName: formData['fileName'],
             format: (formData['format'] == 'png') ? ImageFormat.png : ImageFormat.jpeg,
-            targetWidth: formData['targetWidth'] ?? 1080,
-            targetHeight: formData['targetHeight'] ?? 1080,
+            targetWidth: formData['targetWidth'],
+            targetHeight: formData['targetHeight'],
             cameraDeviceSensor: (formData['cameraDeviceSensor'] == 'front')
                 ? CameraDeviceSensor.front
-                : CameraDeviceSensor.rear,
+                : CameraDeviceSensor.back,
             cropTitle: formData['cropTitle'] ?? 'Crop Image',
+            previewTitle: 'Preview',
           );
-          logs.add('ImageModel created: '
-              'crop=${imageModel.crop}, quality=${imageModel.quality}, fileName=${imageModel.fileName}, format=${imageModel.format}, targetWidth=${imageModel.targetWidth}, targetHeight=${imageModel.targetHeight}, cameraDeviceSensor=${imageModel.cameraDeviceSensor}, cropTitle=${imageModel.cropTitle}');
+          logs.add('CameraCaptureParams created: '
+              'crop=${params.crop}, quality=${params.quality}, fileName=${params.fileName}, format=${params.format}, targetWidth=${params.targetWidth}, targetHeight=${params.targetHeight}, cameraDeviceSensor=${params.cameraDeviceSensor}, cropTitle=${params.cropTitle}, previewTitle=${params.previewTitle}');
+          
           final camera = ApzCamera();
           logs.add('ApzCamera instance created');
-          final result = await camera.pickFromCamera(
-            cancelCallback: () { logs.add('Camera operation cancelled by user'); },
-            imagemodel: imageModel,
+
+          final result = await camera.openCamera(
+            context: context,
+            params: params,
           );
-          if (result == null) {
-            logs.add('No image captured (result is null)');
+
+          if (result == null || result.isCanceled) {
+            logs.add('No image captured or operation canceled.');
             return {'error': 'No image was captured.', 'logs': logs};
           }
+
           logs.add('Image captured successfully');
-          logs.add('Image path: \'${result.imageFile?.path}\'');
-          logs.add('Base64 size (KB): ${result.base64ImageSizeInKB}');
+          logs.add('Image path: \'${result.filePath}\'');
+          if (result.fileSizeBytes != null) {
+            logs.add('File size (KB): ${result.fileSizeBytes! / 1024}');
+          }
           return {
-            'imageFile': result.imageFile,
-            'imagePath': result.imageFile?.path,
+            'filePath': result.filePath,
             'base64': result.base64String,
-            'base64SizeKB': result.base64ImageSizeInKB,
+            'fileSizeKB': result.fileSizeBytes != null ? result.fileSizeBytes! / 1024 : null,
             'logs': logs,
           };
         } catch (e, st) {
@@ -129,7 +181,6 @@ class PluginLauncher {
           };
         }
 
-     
 case 'contact':
   final List<String> logs = [];
   try {

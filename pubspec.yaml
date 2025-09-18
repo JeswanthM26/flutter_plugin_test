@@ -277,7 +277,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/plugin_metadata.json
-    - assets/JESWANTH.pdf
     - assets/pdf.pdf
     - assets/rsa_public.pem
     - assets/rsa_private.pem
