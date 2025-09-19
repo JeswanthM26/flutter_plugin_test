@@ -318,7 +318,8 @@ case 'contact':
           dateFormat: formData['dateFormat'] ?? 'dd/MM/yyyy',
         );
         final result = await datePicker.showCustomDate(params);
-        return result;
+       return {'dates': result};
+
 
       case 'device_info':
         final List<String> logs = [];
